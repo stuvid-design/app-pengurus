@@ -1,0 +1,232 @@
+/* ============================================================
+   style.absensi.css — Modul Absensi
+   ============================================================ */
+
+    /* Attendance pills H/S/I/A/T */
+    .att-group {
+      display: flex;
+      gap: 5px;
+      flex-wrap: nowrap
+    }
+    
+    .att-group input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0
+    }
+    
+    .att-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 30px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      transition: all .15s ease;
+      background: var(--clr-body-bg);
+      color: var(--clr-text-muted);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent
+    }
+    
+    .att-pill:hover { transform: translateY(-1px) }
+    
+    .att-group input[value="H"]:checked+.att-pill-H {
+      background: rgba(34,197,94,.18);
+      color: #15803d;
+      border-color: #22c55e;
+      box-shadow: 0 2px 8px rgba(34,197,94,.3)
+    }
+    
+    .att-group input[value="S"]:checked+.att-pill-S {
+      background: rgba(245,158,11,.18);
+      color: #92400e;
+      border-color: #f59e0b;
+      box-shadow: 0 2px 8px rgba(245,158,11,.3)
+    }
+    
+    .att-group input[value="I"]:checked+.att-pill-I {
+      background: rgba(59,130,246,.18);
+      color: #1d4ed8;
+      border-color: #3b82f6;
+      box-shadow: 0 2px 8px rgba(59,130,246,.3)
+    }
+    
+    .att-group input[value="A"]:checked+.att-pill-A {
+      background: rgba(239,68,68,.18);
+      color: #b91c1c;
+      border-color: #ef4444;
+      box-shadow: 0 2px 8px rgba(239,68,68,.3)
+    }
+    
+    .att-group input[value="T"]:checked+.att-pill-T {
+      background: rgba(139,92,246,.18);
+      color: #6d28d9;
+      border-color: #8b5cf6;
+      box-shadow: 0 2px 8px rgba(139,92,246,.3)
+    }
+    
+    .att-pill-H:hover { 
+      background: rgba(34,197,94,.1); 
+      color: #15803d 
+    }
+    .att-pill-S:hover { 
+      background: rgba(245,158,11,.1); 
+      color: #92400e 
+    }
+    .att-pill-I:hover {
+      background: rgba(59,130,246,.1);
+      color: #1d4ed8
+    }
+    .att-pill-A:hover {
+      background: rgba(239,68,68,.1);
+      color: #b91c1c
+    }
+    .att-pill-T:hover {
+      background: rgba(139,92,246,.1);
+      color: #6d28d9
+    }
+
+    /* Absensi buku table */
+    .tbl-buku-absen { min-width:900px }
+    .tbl-buku-absen th,
+    .tbl-buku-absen td { 
+      padding: 9px 8px;
+      text-align: center;
+      font-size: 12.5px;
+      white-space: nowrap
+    }
+    
+    .tbl-buku-absen th { font-size: 11.5px }
+    .tbl-buku-absen td.td-nama {
+      text-align: left;
+      font-weight: 600;
+      min-width: 150px
+    }
+    
+    .tbl-buku-absen td.td-nis {
+      font-family: monospace;
+      font-size: 12px;
+      color: var(--clr-text-sub)
+    }
+    
+    .tbl-buku-absen .col-sticky {
+      position: sticky;
+      background: var(--clr-card-bg);
+      z-index: 2
+    }
+    
+    .tbl-buku-absen thead .col-sticky {
+      background: rgba(26,107,60,.05);
+      z-index: 3
+    }
+    
+    .col-s1 { left: 0; min-width: 36px }
+    .col-s2 { left: 36px; min-width: 72px }
+    .col-s3 { 
+      left: 108px; 
+      min-width: 150px; 
+      box-shadow: 3px 0 6px rgba(26,107,60,.06)
+    }
+    
+    .tbl-buku-absen .col-sum { 
+      border-left: 2px solid rgba(26,107,60,.1)
+    }
+    
+    /* Attendance cell colors */
+    .cel-H {
+      background: rgba(34,197,94,.12);
+      color: #15803d;
+      font-weight: 700;
+      border-radius: 4px
+    }
+    
+    .cel-S { 
+      background: rgba(245,158,11,.12);
+      color: #92400e;
+      font-weight: 700;
+      border-radius: 4px
+    }
+    
+    .cel-I {
+      background: rgba(59,130,246,.12);
+      color: #1d4ed8;
+      font-weight: 700;
+      border-radius: 4px
+    }
+    
+    .cel-A {
+      background: rgba(239,68,68,.12);
+      color: #b91c1c;
+      font-weight: 700;
+      border-radius: 4px
+    }
+    
+    .cel-T {
+      background: rgba(139,92,246,.12);
+      color: #6d28d9;
+      font-weight: 700;
+      border-radius: 4px
+    }
+    
+    .cel-lib { color: var(--clr-text-muted); font-size: 11px }
+    .col-pct.high { color: #15803d; font-weight: 700 }
+    .col-pct.mid  { color: #b45309; font-weight: 700 }
+    .col-pct.low  {color: #b91c1c; font-weight: 700 }
+
+    /* Rekap stat cards (absensi) */
+    .rekap-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px,1fr));
+      gap: 12px;
+      margin-bottom: 18px
+    }
+    
+    .rekap-stat-card {
+      background: var(--clr-card-bg);
+      border: 1px solid rgba(26,107,60,.07);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      box-shadow: var(--shadow-card)
+    }
+    
+    .rekap-stat-card .rsc-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--clr-text-muted);
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 5px
+    }
+    
+    .rekap-stat-card .rsc-label i { font-size: 13px }
+    .rekap-stat-card .rsc-val {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1
+    }
+    
+    .rekap-stat-card .rsc-sub {
+      font-size: 11.5px;
+      color: var(--clr-text-muted);
+      margin-top: 3px
+    }
+    
+    .rsc-green { border-top: 3px solid var(--clr-success)}
+    .rsc-green .rsc-val { color: #15803d }
+    .rsc-yellow { border-top: 3px solid var(--clr-warning) }
+    .rsc-yellow .rsc-val { color: #b45309 }
+    .rsc-red { border-top: 3px solid var(--clr-danger) }
+    .rsc-red .rsc-val { color: #b91c1c }
+    .rsc-blue { border-top: 3px solid var(--clr-info) }
+    .rsc-blue .rsc-val { color: #1d4ed8 }
+    .rsc-purple { border-top: 3px solid #8b5cf6 }
+    .rsc-purple .rsc-val { color: #6d28d9 }
