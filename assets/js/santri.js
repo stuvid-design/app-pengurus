@@ -187,20 +187,19 @@ function _renderPager(total) {
 }
 
 function _syncTabs() {
-  // 1. Tambahkan perhitungan untuk masing-masing status
   const aktif = window.santriCache.filter(s => s.status === 'Aktif').length;
   const cuti = window.santriCache.filter(s => s.status === 'Cuti').length;
-  const lulusNonAktif = window.santriCache.filter(s => s.status === 'Lulus' || s.status === 'Non-Aktif').length;
+  const lulus = window.santriCache.filter(s => s.status === 'Lulus').length;
+  const nonAktif = window.santriCache.filter(s => s.status === 'Non-Aktif').length;
 
   document.querySelectorAll('#view-data-santri .page-tab').forEach(t => {
-    // 2. Lengkapi objek map dengan dataset cuti dan lulus
     const map = { 
       all: `Semua Santri (${window.santriCache.length})`, 
       aktif: `Aktif (${aktif})`,
       cuti: `Cuti (${cuti})`,
-      lulus: `Lulus / Non-Aktif (${lulusNonAktif})` 
+      lulus: `Lulus (${lulus})`,
+      nonaktif: `Non-Aktif (${nonAktif})`
     };
-    
     if (map[t.dataset.subtab]) t.textContent = map[t.dataset.subtab];
   });
 
@@ -208,7 +207,6 @@ function _syncTabs() {
     document.getElementById('dash-total-santri').textContent = aktif;
   }
 }
-
 /* ── MODAL & CRUD ACTIONS ────────────────────────────────────── */
 function _openTambahSantri() {
   _santriState.editDocId = null;
@@ -307,15 +305,19 @@ function _wireEvents() {
     document.getElementById(id)?.addEventListener('change',() => { _santriState.currentPage = 1; _render(); });
   });
 
-  // Tab Filter Status
+// Tab Filter Status
   document.querySelectorAll('#view-data-santri .page-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('#view-data-santri .page-tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
-      const map = { all:'', aktif:'Aktif', cuti:'Cuti', lulus:'Non-Aktif' };
+      
+      // PERUBAHAN: Pisahkan lulus dan nonaktif sesuai dengan nilai <option>
+      const map = { all:'', aktif:'Aktif', cuti:'Cuti', lulus:'Lulus', nonaktif:'Non-Aktif' };
       const sel = document.getElementById('santri-filter-status');
       if (sel) sel.value = map[tab.dataset.subtab] || '';
-      _santriState.currentPage = 1; _render();
+      
+      _santriState.currentPage = 1; 
+      _render();
     });
   });
 
