@@ -1,0 +1,144 @@
+/* ============================================================
+   style.kelas.css — Styling Modular: Modul Kelas & Mutasi
+   ============================================================ */
+
+/* ── KELAS GRID ──────────────────────────────────────────────── */
+.kls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+/* ── KELAS CARD ──────────────────────────────────────────────── */
+.kls-card {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transition: transform var(--trans), box-shadow var(--trans);
+}
+.kls-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(26,107,60,.12);
+}
+.kls-card--nonaktif {
+  opacity: .65;
+  filter: grayscale(.3);
+}
+
+/* Card header */
+.kls-card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.kls-card__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: rgba(26,107,60,.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.kls-card__icon i {
+  font-size: 22px;
+  color: var(--clr-primary);
+}
+.kls-card__nama {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--clr-text-main);
+  line-height: 1.25;
+  margin-bottom: 3px;
+}
+.kls-card__kode {
+  font-size: 11.5px;
+  font-family: monospace;
+  color: var(--clr-text-muted);
+  background: rgba(26,107,60,.07);
+  padding: 1px 7px;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+/* Stats row */
+.kls-card__stats {
+  display: flex;
+  gap: 0;
+  border: 1px solid rgba(26,107,60,.08);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.kls-card__stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 6px;
+  border-right: 1px solid rgba(26,107,60,.08);
+}
+.kls-card__stat:last-child { border-right: none; }
+
+.kls-card__stat-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--clr-text-muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 4px;
+}
+.kls-card__stat-val {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--clr-text-main);
+  line-height: 1;
+}
+
+/* ── MUTASI BADGE COLORS ─────────────────────────────────────── */
+.badge.badge-lulus    { background:rgba(59,130,246,.1);  color:#1d4ed8; }
+.badge.badge-pindah   { background:rgba(245,158,11,.1);  color:#b45309; }
+.badge.badge-keluar   { background:rgba(239,68,68,.1);   color:#b91c1c; }
+.badge.badge-aktif-kb { background:rgba(34,197,94,.1);   color:#15803d; }
+
+/* ── WHATSAPP LINK ───────────────────────────────────────────── */
+.wali-wa-link {
+  color: var(--clr-primary);
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  transition: opacity .2s;
+}
+.wali-wa-link:hover { opacity: .75; }
+.wali-wa-link i     { font-size: 15px; color: #25d366; }
+
+/* ── PANEL FADE IN ───────────────────────────────────────────── */
+.kls-panel, .wali-panel, .mutasi-panel {
+  animation: fadeInKls .18s ease;
+}
+@keyframes fadeInKls {
+  from { opacity:0; transform:translateY(5px); }
+  to   { opacity:1; transform:translateY(0);   }
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .kls-grid {
+    grid-template-columns: 1fr;
+  }
+  .kls-card__stat-val { font-size: 15px; }
+}
+
+@media (max-width: 480px) {
+  .kls-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
