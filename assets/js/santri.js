@@ -187,12 +187,26 @@ function _renderPager(total) {
 }
 
 function _syncTabs() {
+  // 1. Tambahkan perhitungan untuk masing-masing status
   const aktif = window.santriCache.filter(s => s.status === 'Aktif').length;
+  const cuti = window.santriCache.filter(s => s.status === 'Cuti').length;
+  const lulusNonAktif = window.santriCache.filter(s => s.status === 'Lulus' || s.status === 'Non-Aktif').length;
+
   document.querySelectorAll('#view-data-santri .page-tab').forEach(t => {
-    const map = { all: `Semua Santri (${window.santriCache.length})`, aktif: `Aktif (${aktif})` };
+    // 2. Lengkapi objek map dengan dataset cuti dan lulus
+    const map = { 
+      all: `Semua Santri (${window.santriCache.length})`, 
+      aktif: `Aktif (${aktif})`,
+      cuti: `Cuti (${cuti})`,
+      lulus: `Lulus / Non-Aktif (${lulusNonAktif})` 
+    };
+    
     if (map[t.dataset.subtab]) t.textContent = map[t.dataset.subtab];
   });
-  if (document.getElementById('dash-total-santri')) document.getElementById('dash-total-santri').textContent = aktif;
+
+  if (document.getElementById('dash-total-santri')) {
+    document.getElementById('dash-total-santri').textContent = aktif;
+  }
 }
 
 /* ── MODAL & CRUD ACTIONS ────────────────────────────────────── */
