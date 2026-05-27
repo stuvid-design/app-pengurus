@@ -1,0 +1,150 @@
+/* ============================================================
+   style.hafalan.css — Styling Modular: Modul Hafalan
+   ============================================================ */
+
+/* ── PANEL VISIBILITY ────────────────────────────────────────── */
+.hf-panel {
+  animation: fadeInHf .18s ease;
+}
+@keyframes fadeInHf {
+  from { opacity:0; transform:translateY(6px); }
+  to   { opacity:1; transform:translateY(0);   }
+}
+
+/* ── JUZ GRID ────────────────────────────────────────────────── */
+.hf-juz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.hf-juz-box {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 10px 6px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
+  min-height: 68px;
+  text-align: center;
+}
+.hf-juz-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(26,107,60,.15);
+}
+
+.hf-juz-num {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--clr-primary);
+  line-height: 1;
+}
+
+.hf-juz-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--clr-text-muted);
+  letter-spacing: .02em;
+}
+
+/* Skeleton juz box */
+.hf-juz-skeleton {
+  background: rgba(26,107,60,.07) !important;
+  border: 1.5px solid rgba(26,107,60,.08) !important;
+  min-height: 68px;
+  border-radius: var(--radius-sm);
+  animation: pulse 1.5s infinite;
+}
+
+/* ── STATUS LEGEND CHIPS ─────────────────────────────────────── */
+.hf-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 10px 16px;
+  background: var(--clr-card-bg);
+  border: 1px solid rgba(26,107,60,.08);
+  border-radius: var(--radius-md);
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-card);
+}
+.hf-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--clr-text-sub);
+}
+.hf-legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.hf-legend-dot--selesai   { background: rgba(26,107,60,.3);    border: 1.5px solid rgba(26,107,60,.4);  }
+.hf-legend-dot--proses    { background: rgba(245,158,11,.3);   border: 1.5px solid rgba(245,158,11,.4); }
+.hf-legend-dot--mengulang { background: rgba(59,130,246,.3);   border: 1.5px solid rgba(59,130,246,.4); }
+.hf-legend-dot--belum     { background: rgba(26,107,60,.05);   border: 1.5px dashed rgba(26,107,60,.2); }
+
+/* ── PROGRESS BAR WRAPPER ────────────────────────────────────── */
+.hf-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hf-progress-track {
+  flex: 1;
+  height: 8px;
+  background: rgba(26,107,60,.1);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.hf-progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width .6s ease;
+}
+.hf-progress-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  min-width: 32px;
+  text-align: right;
+}
+
+/* ── DETAIL TABLE: Juz number badge ─────────────────────────── */
+.hf-juz-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(26,107,60,.1);
+  color: var(--clr-primary);
+  font-size: 14px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .hf-juz-grid {
+    grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
+    gap: 8px;
+  }
+  .hf-juz-box  { min-height: 56px; padding: 8px 4px; }
+  .hf-juz-num  { font-size: 15px; }
+  .hf-juz-label{ font-size: 9px;  }
+}
+
+@media (max-width: 480px) {
+  .hf-juz-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
