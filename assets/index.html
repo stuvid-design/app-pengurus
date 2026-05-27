@@ -1,0 +1,5001 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Portal Pengurus Madrasah Diniyah — Sistem Informasi Manajemen Madin" />
+  <meta name="theme-color" content="#1a6b3c" />
+  <title>Portal Pengurus — Madrasah Diniyah DQLM</title>
+
+  <!-- ═══ FAVICON (opsional, ganti path sesuai file Anda) ═══ -->
+  <!-- <link rel="icon" type="image/png" href="assets/favicon.png" /> -->
+
+  <!-- ═══ GOOGLE FONTS ═══ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- ═══ PHOSPHOR ICONS ═══ -->
+  <script
+    src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"
+    defer
+  ></script>
+
+  <!-- ═══ CHART.JS ═══ -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"
+    defer
+  ></script>
+
+  <!-- ═══ STYLESHEET UTAMA ═══ -->
+  <link rel="stylesheet" href="assets/css/style.main.css" />
+
+  <!-- ═══ STYLESHEET DATA & AKADEMIK ═══ -->
+  <link rel="stylesheet" href="assets/css/style.data-santri.css" />
+  <link rel="stylesheet" href="assets/css/style.kelas.css" />
+  <link rel="stylesheet" href="assets/css/style.absensi.css" />
+  <link rel="stylesheet" href="assets/css/style.nilai.css" />
+  <link rel="stylesheet" href="assets/css/style.hafalan.css" />
+  <link rel="stylesheet" href="assets/css/style.pdf.css" />
+
+  <!-- ═══ STYLESHEET KEUANGAN ═══ -->
+  <link rel="stylesheet" href="assets/css/style.keuangan.css" />
+
+  <!-- ═══ SUPABASE ═══ -->
+  <script type="module" src="assets/js/app.supabase.js"></script>
+
+  <!-- ═══ MODULES ═══ -->
+  <script type="module" src="assets/js/app.dashboard-chart.js"></script>
+  <script type="module" src="assets/js/app.data-santri.js"></script>
+  <script type="module" src="assets/js/app.kelas.js"></script>
+  <script type="module" src="assets/js/app.absensi.js"></script>
+  <script type="module" src="assets/js/app.nilai.js"></script>
+  <script type="module" src="assets/js/app.hafalan.js"></script>
+  <script type="module" src="assets/js/app.keuangan.js"></script>
+  <script type="module" src="assets/js/app.ustadz.js"></script>
+  <script type="module" src="assets/js/app.pengumuman.js"></script>
+  <script type="module" src="assets/js/app.pdf.js"></script>
+  
+
+</head>
+
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     AUTH LOADING OVERLAY
+     Tampil saat halaman pertama kali dibuka,
+     disembunyikan oleh JS setelah sesi dicek.
+═══════════════════════════════════════════════════════════════ -->
+<div id="auth-loading">
+  <div class="auth-loading-logo">
+    <i class="ph-bold ph-mosque"></i>
+  </div>
+  <div class="auth-spinner"></div>
+  <p class="auth-loading-text">Memverifikasi sesi login…</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     LOGIN PAGE
+     Ditampilkan saat pengguna belum terautentikasi.
+     Di-control oleh showLogin() / showApp() di app.js
+═══════════════════════════════════════════════════════════════ -->
+<div id="page-login" style="display:none;">
+  <div class="login-card">
+
+    <!-- Logo & judul -->
+    <div class="login-logo">
+      <div class="login-logo-icon">
+        <i class="ph-bold ph-mosque"></i>
+      </div>
+      <h1>Portal Pengurus<br>Madrasah Diniyah</h1>
+      <p>Sistem Informasi Manajemen Madin</p>
+    </div>
+
+    <h2 class="login-title">Masuk ke Akun Anda</h2>
+    <p class="login-subtitle">Gunakan akun pengurus yang telah terdaftar</p>
+
+    <!-- Email -->
+    <div class="form-group">
+      <label class="form-label" for="login-email">Email</label>
+      <input
+        id="login-email"
+        type="email"
+        class="form-control"
+        placeholder="pengurus@madin.id"
+        autocomplete="email"
+      />
+    </div>
+
+    <!-- Password -->
+    <div class="form-group">
+      <label class="form-label" for="login-password">Password</label>
+      <div style="position:relative;">
+        <input
+          id="login-password"
+          type="password"
+          class="form-control"
+          placeholder="••••••••"
+          autocomplete="current-password"
+          style="padding-right:44px;"
+        />
+        <button
+          id="btn-toggle-pw"
+          type="button"
+          title="Tampilkan password"
+          style="position:absolute;right:12px;top:50%;transform:translateY(-50%);
+                 background:none;border:none;color:var(--clr-text-muted);
+                 cursor:pointer;font-size:18px;"
+        >
+          <i class="ph-bold ph-eye" id="pw-eye-icon"></i>
+        </button>
+      </div>
+      <div style="text-align:right;margin-top:6px;">
+        <button
+          id="btn-forgot-pw"
+          type="button"
+          style="background:none;border:none;font-size:12.5px;
+                 color:var(--clr-primary);font-weight:600;
+                 cursor:pointer;font-family:inherit;padding:0;"
+        >
+          Lupa password?
+        </button>
+      </div>
+    </div>
+
+    <!-- Tombol Login -->
+    <button id="btn-login" class="login-btn">
+      <i class="ph-bold ph-sign-in btn-text"></i>
+      <span class="btn-text">Masuk</span>
+      <div class="btn-spinner"></div>
+    </button>
+
+    <!-- Pesan error -->
+    <p id="login-error" class="text-danger fs-12 text-center mt-16 hidden"></p>
+
+    <p class="login-footer">© 2026 Madrasah Diniyah DQLM — Sistem Internal</p>
+  </div>
+</div><!-- #page-login -->
+
+<!-- ═══════════════════════════════════════════════════════════
+     MAIN APP SHELL
+     Grid utama: Sidebar (col 1) + Topbar & Main Content (col 2)
+     Disembunyikan saat belum login (.hidden), diperlihatkan
+     oleh showApp() setelah autentikasi berhasil.
+═══════════════════════════════════════════════════════════════ -->
+<div id="app-shell" class="hidden">
+  <!-- Backdrop untuk mobile sidebar -->
+  <div id="sidebar-backdrop"></div>
+
+<!-- ═══════════════════════════════════════════════════════════
+       SIDEBAR
+  ═══════════════════════════════════════════════════════════════ -->
+  <nav id="sidebar">
+
+    <!-- Brand / Logo -->
+    <div class="sidebar-brand">
+      <div class="sidebar-logo">
+        <i class="ph-bold ph-mosque"></i>
+      </div>
+      <div class="sidebar-brand-text">
+        <strong>Portal Pengurus</strong>
+        <span>Madrasah Diniyah DQLM</span>
+      </div>
+    </div>
+
+    <!-- Navigasi utama -->
+    <div class="sidebar-nav">
+
+      <!-- ── DASHBOARD ──────────────────────────────────────── -->
+      <ul>
+        <li class="nav-item">
+          <div class="nav-link active" data-page="dashboard">
+            <i class="ph-bold ph-squares-four"></i>
+            <span class="nav-text">Dashboard</span>
+          </div>
+        </li>
+      </ul>
+
+      <!-- ── DATA & AKADEMIK ────────────────────────────────── -->
+      <p class="nav-group-label">Data &amp; Akademik</p>
+      <ul>
+
+        <!-- Data Santri -->
+        <li class="nav-item" id="nav-grp-santri">
+          <div class="nav-link" data-toggle="nav-grp-santri">
+            <i class="ph-bold ph-student"></i>
+            <span class="nav-text">Data Santri</span>
+            <i class="ph-bold ph-caret-right nav-chevron"></i>
+          </div>
+          <ul class="nav-submenu">
+            <li><div class="nav-link" data-page="data-santri">Data Santri</div></li>
+            <li><div class="nav-link" data-page="kelas-tingkatan">Kelas / Tingkatan</div></li>
+            <li><div class="nav-link" data-page="data-wali">Data Wali Santri</div></li>
+            <li><div class="nav-link" data-page="riwayat-mutasi">Riwayat Pindah / Lulus</div></li>
+          </ul>
+        </li>
+
+        <!-- Absensi -->
+        <li class="nav-item" id="nav-grp-absensi">
+          <div class="nav-link" data-toggle="nav-grp-absensi">
+            <i class="ph-bold ph-clipboard-text"></i>
+            <span class="nav-text">Absensi</span>
+            <i class="ph-bold ph-caret-right nav-chevron"></i>
+          </div>
+          <ul class="nav-submenu">
+            <li><div class="nav-link" data-page="absensi-santri">Absensi Santri</div></li>
+            <li><div class="nav-link" data-page="absensi-ustadz">Absensi Ustadz</div></li>
+            <li><div class="nav-link" data-page="rekap-absensi">Rekap Harian / Bulanan</div></li>
+            <li><div class="nav-link" data-page="izin-sakit">Izin / Sakit / Alpha</div></li>
+          </ul>
+        </li>
+
+        <!-- Akademik (disembunyikan untuk role: bendahara) -->
+        <li class="nav-item" id="nav-grp-akademik" data-role-hide="bendahara">
+          <div class="nav-link" data-toggle="nav-grp-akademik">
+            <i class="ph-bold ph-book-open"></i>
+            <span class="nav-text">Akademik</span>
+            <i class="ph-bold ph-caret-right nav-chevron"></i>
+          </div>
+          <ul class="nav-submenu">
+            <li><div class="nav-link" data-page="kurikulum">Kurikulum</div></li>
+            <li><div class="nav-link" data-page="jadwal-mengajar">Jadwal Mengajar</div></li>
+            <li><div class="nav-link" data-page="mata-pelajaran">Mata Pelajaran</div></li>
+            <li><div class="nav-link" data-page="nilai-santri">Nilai Santri</div></li>
+            <li><div class="nav-link" data-page="hafalan">Hafalan</div></li>
+            <li><div class="nav-link" data-page="ujian">Ujian / Imtihan</div></li>
+            <li><div class="nav-link" data-page="raport">Raport</div></li>
+            <li><div class="nav-link" data-page="kenaikan-tingkat">Kenaikan Tingkat</div></li>
+          </ul>
+        </li>
+
+      </ul>
+
+      <!-- ── KEUANGAN ────────────────────────────────────────── -->
+      <p class="nav-group-label">Keuangan</p>
+      <ul>
+
+        <!-- Keuangan (disembunyikan untuk role: admin_data) -->
+        <li class="nav-item" id="nav-grp-keuangan" data-role-hide="admin_data">
+          <div class="nav-link" data-toggle="nav-grp-keuangan">
+            <i class="ph-bold ph-currency-circle-dollar"></i>
+            <span class="nav-text">Keuangan</span>
+            <i class="ph-bold ph-caret-right nav-chevron"></i>
+          </div>
+          <ul class="nav-submenu">
+            <li><div class="nav-link" data-page="syahriah-spp">Syahriah / SPP</div></li>
+            <li><div class="nav-link" data-page="infaq-donasi">Infaq &amp; Donasi</div></li>
+            <li><div class="nav-link" data-page="pengeluaran">Pengeluaran</div></li>
+            <li><div class="nav-link" data-page="kas-madrasah">Kas Madrasah</div></li>
+            <li><div class="nav-link" data-page="tunggakan">Tunggakan</div></li>
+            <li><div class="nav-link" data-page="laporan-keuangan">Laporan Keuangan</div></li>
+          </ul>
+        </li>
+
+      </ul>
+
+      <!-- ── SDM ─────────────────────────────────────────────── -->
+      <p class="nav-group-label">SDM</p>
+      <ul>
+
+        <!-- Ustadz & Pengurus -->
+        <li class="nav-item" id="nav-grp-ustadz">
+          <div class="nav-link" data-toggle="nav-grp-ustadz">
+            <i class="ph-bold ph-users"></i>
+            <span class="nav-text">Ustadz &amp; Pengurus</span>
+            <i class="ph-bold ph-caret-right nav-chevron"></i>
+          </div>
+          <ul class="nav-submenu">
+            <li><div class="nav-link" data-page="data-ustadz">Data Ustadz</div></li>
+            <li><div class="nav-link" data-page="jadwal-mengajar-ustadz">Jadwal Mengajar</div></li>
+            <li><div class="nav-link" data-page="honor-ustadz">Honor Ustadz</div></li>
+            <li><div class="nav-link" data-page="kehadiran-ustadz">Kehadiran Ustadz</div></li>
+            <li><div class="nav-link" data-page="struktur-pengurus">Struktur Pengurus</div></li>
+            <li><div class="nav-link" data-page="sop-madrasah">SOP Madrasah</div></li>
+          </ul>
+        </li>
+
+      </ul>
+
+      <!-- ── KEGIATAN ────────────────────────────────────────── -->
+      <p class="nav-group-label">Kegiatan</p>
+      <ul>
+
+        <!-- Agenda & Kegiatan -->
+        <li class="nav-item" id="nav-grp-agenda">
+          <div class="nav-link" data-toggle="nav-grp-agenda">
+            <i class="ph-bold ph-calendar-dots"></i>
+            <span class="nav-text">Agenda &amp; Kegiatan</span>
+            <i class="ph-bold ph-caret-right nav-chevron"></i>
+          </div>
+          <ul class="nav-submenu">
+            <li><div class="nav-link" data-page="pengajian">Pengajian</div></li>
+            <li><div class="nav-link" data-page="imtihan">Imtihan</div></li>
+            <li><div class="nav-link" data-page="wisuda">Wisuda</div></li>
+            <li><div class="nav-link" data-page="phbi">PHBI</div></li>
+            <li><div class="nav-link" data-page="rapat-wali">Rapat Wali</div></li>
+            <li><div class="nav-link" data-page="kegiatan-santri">Kegiatan Santri</div></li>
+          </ul>
+        </li>
+
+      </ul>
+
+      <!-- ── ADMINISTRASI ────────────────────────────────────── -->
+      <p class="nav-group-label">Administrasi</p>
+      <ul>
+
+        <li class="nav-item">
+          <div class="nav-link" data-page="surat-administrasi">
+            <i class="ph-bold ph-file-text"></i>
+            <span class="nav-text">Surat &amp; Administrasi</span>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <div class="nav-link" data-page="inventaris">
+            <i class="ph-bold ph-package"></i>
+            <span class="nav-text">Inventaris</span>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <div class="nav-link" data-page="pengumuman">
+            <i class="ph-bold ph-megaphone"></i>
+            <span class="nav-text">Pengumuman</span>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <div class="nav-link" data-page="pengaturan">
+            <i class="ph-bold ph-gear"></i>
+            <span class="nav-text">Pengaturan</span>
+          </div>
+        </li>
+
+      </ul>
+
+    </div><!-- .sidebar-nav -->
+
+    <!-- Footer sidebar: chip info user -->
+    <div class="sidebar-footer">
+      <div class="sidebar-user" id="sidebar-user-chip">
+        <div class="sidebar-avatar" id="sidebar-avatar-initials">AU</div>
+        <div class="sidebar-user-info">
+          <strong id="sidebar-user-name">Admin Utama</strong>
+          <span id="sidebar-user-role">Kepala Madrasah</span>
+        </div>
+      </div>
+    </div>
+
+  </nav><!-- #sidebar -->
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TOPBAR
+  ═══════════════════════════════════════════════════════════════ -->
+  <header id="topbar">
+
+    <!-- Hamburger toggle -->
+    <button id="sidebar-toggle" title="Toggle Sidebar">
+      <i class="ph-bold ph-list"></i>
+    </button>
+
+    <!-- Search bar -->
+    <div class="topbar-search">
+      <i class="ph-bold ph-magnifying-glass"></i>
+      <input
+        type="text"
+        id="topbar-search-input"
+        placeholder="Cari santri, ustadz, kelas, atau menu…"
+        autocomplete="off"
+      />
+    </div>
+
+    <!-- Aksi kanan -->
+    <div class="topbar-actions">
+
+      <!-- Chip tanggal Masehi & Hijriah -->
+      <div class="topbar-date" id="topbar-date-chip">
+        <i class="ph-bold ph-calendar-blank"></i>
+        <p>
+          <strong id="topbar-date-greg">—</strong>
+          <span id="topbar-date-hijri"
+                style="font-size:11px;color:var(--clr-text-muted);">—</span>
+        </p>
+      </div>
+
+      <!-- Notifikasi -->
+      <button class="topbar-icon-btn" title="Notifikasi">
+        <i class="ph-bold ph-bell"></i>
+        <span class="badge-notif">3</span>
+      </button>
+
+      <!-- Logout -->
+      <button class="topbar-icon-btn" id="btn-logout" title="Keluar">
+        <i class="ph-bold ph-sign-out"></i>
+      </button>
+
+      <!-- Chip profil user -->
+      <div class="topbar-profile" id="topbar-profile-chip">
+        <div class="topbar-profile-avatar" id="topbar-avatar-initials">AU</div>
+        <div class="topbar-profile-info">
+          <strong id="topbar-user-name">Admin Utama</strong>
+          <span id="topbar-user-role">Pengurus Madrasah</span>
+        </div>
+        <i class="ph-bold ph-caret-down"
+           style="font-size:14px;color:var(--clr-text-muted);margin-left:4px;"></i>
+      </div>
+
+    </div><!-- .topbar-actions -->
+
+  </header><!-- #topbar -->
+  
+<!-- ═══════════════════════════════════════════════════════════
+       MAIN CONTENT AREA
+  ═══════════════════════════════════════════════════════════════ -->
+  <main id="main-content">
+
+    <!-- ══════════════════════════════════════════════════════
+         VIEW: DASHBOARD
+    ══════════════════════════════════════════════════════════ -->
+    <section id="view-dashboard" class="page-view active">
+
+      <!-- Header greeting -->
+      <div class="dash-header">
+        <div>
+          <p class="dash-greeting">Assalamu'alaikum, <span id="dash-username">Admin</span> 👋</p>
+          <p class="dash-greeting-sub">Berikut ringkasan kondisi madrasah hari ini.</p>
+        </div>
+        <div class="dash-date-pill">
+          <i class="ph-bold ph-calendar-blank"></i>
+          <p>
+            <strong id="dash-date-greg">—</strong>
+            <span id="dash-date-hijri"
+                  style="font-size:11.5px;color:var(--clr-text-muted);">—</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="stat-grid">
+
+        <div class="stat-card green">
+          <div class="stat-icon"><i class="ph-bold ph-student"></i></div>
+          <div class="stat-content">
+            <p class="stat-label">Total Santri Aktif</p>
+            <p class="stat-value" id="dash-total-santri">128</p>
+            <p class="stat-change up"><i class="ph-bold ph-arrow-up"></i> +3 bulan ini</p>
+          </div>
+        </div>
+
+        <div class="stat-card blue">
+          <div class="stat-icon"><i class="ph-bold ph-check-square"></i></div>
+          <div class="stat-content">
+            <p class="stat-label">Kehadiran Hari Ini</p>
+            <p class="stat-value">112</p>
+            <p class="stat-change up"><i class="ph-bold ph-arrow-up"></i> 87.5%</p>
+          </div>
+        </div>
+
+        <div class="stat-card orange">
+          <div class="stat-icon"><i class="ph-bold ph-currency-circle-dollar"></i></div>
+          <div class="stat-content">
+            <p class="stat-label">Pemasukan Bulan Ini</p>
+            <p class="stat-value money">Rp 32,5 jt</p>
+            <p class="stat-change up"><i class="ph-bold ph-arrow-up"></i> +2.2%</p>
+          </div>
+        </div>
+
+        <div class="stat-card red">
+          <div class="stat-icon"><i class="ph-bold ph-warning-circle"></i></div>
+          <div class="stat-content">
+            <p class="stat-label">Tunggakan SPP</p>
+            <p class="stat-value">24</p>
+            <p class="stat-change down"><i class="ph-bold ph-arrow-down"></i> 18.75%</p>
+          </div>
+        </div>
+
+        <div class="stat-card purple">
+          <div class="stat-icon"><i class="ph-bold ph-users"></i></div>
+          <div class="stat-content">
+            <p class="stat-label">Ustadz & Pengurus</p>
+            <p class="stat-value">18</p>
+            <p class="stat-change up"><i class="ph-bold ph-arrow-up"></i> Aktif semua</p>
+          </div>
+        </div>
+
+      </div><!-- .stat-grid -->
+
+      <!-- Baris: Chart Kehadiran + Keuangan Summary -->
+      <div class="dash-row dash-row-2">
+
+        <!-- Chart Kehadiran 7 Hari -->
+        <div class="card chart-card">
+          <div class="chart-header">
+            <div>
+              <p class="chart-title">Grafik Kehadiran Santri</p>
+              <p style="font-size:12px;color:var(--clr-text-muted);margin-top:2px;">
+                Rekap 7 hari terakhir</p>
+            </div>
+            <div class="chart-filter">
+              <select id="chart-kehadiran-filter">
+                <option value="7">7 Hari</option>
+                <option value="14">14 Hari</option>
+                <option value="30">30 Hari</option>
+              </select>
+            </div>
+          </div>
+          <div class="chart-legend">
+            <div class="chart-legend-item">
+              <span class="chart-legend-dot" style="background:#1a6b3c;"></span> Hadir
+            </div>
+            <div class="chart-legend-item">
+              <span class="chart-legend-dot" style="background:#f59e0b;"></span> Izin
+            </div>
+            <div class="chart-legend-item">
+              <span class="chart-legend-dot" style="background:#ef4444;"></span> Alpha
+            </div>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="chart-kehadiran" height="200"></canvas>
+          </div>
+        </div>
+
+        <!-- Keuangan Ringkasan -->
+        <div class="card card-padded">
+          <div class="section-header">
+            <p class="section-title">Ringkasan Keuangan</p>
+            <span class="section-action" onclick="navigateTo('kas-madrasah')">
+              Lihat Detail
+            </span>
+          </div>
+          <div class="keu-summary">
+            <div class="keu-item in">
+              <label>
+                <span></span> Pemasukan
+              </label>
+              <p class="keu-val">Rp 32,5 jt</p>
+            </div>
+            <div class="keu-item out">
+              <label>
+                <span></span> Pengeluaran
+              </label>
+              <p class="keu-val">Rp 7,75 jt</p>
+            </div>
+          </div>
+
+          <!-- Chart Bar Keuangan 6 Bulan -->
+          <div class="chart-header" style="margin-top:8px;">
+            <p class="chart-title" style="font-size:13px;">Tren 6 Bulan Terakhir</p>
+          </div>
+          <div class="chart-legend">
+            <div class="chart-legend-item">
+              <span class="chart-legend-dot" style="background:rgba(26,107,60,.75);"></span>
+              Pemasukan
+            </div>
+            <div class="chart-legend-item">
+              <span class="chart-legend-dot" style="background:rgba(239,68,68,.65);"></span>
+              Pengeluaran
+            </div>
+          </div>
+          <canvas id="chart-keuangan" height="160"></canvas>
+        </div>
+
+      </div><!-- .dash-row-2 -->
+
+      <!-- Baris: Kelas Stats + Aktivitas + Hafalan -->
+      <div class="dash-row dash-row-3">
+
+        <!-- Statistik per Kelas -->
+        <div class="card card-padded">
+          <div class="section-header">
+            <p class="section-title">Santri per Kelas</p>
+            <span class="section-action" onclick="navigateTo('data-santri')">
+              Kelola
+            </span>
+          </div>
+          <div class="kelas-stat-list">
+            <div>
+              <div class="kelas-stat-header">
+                <span class="kls">Kelas 1 (Awwaliyah)</span>
+                <span class="cnt">32 santri</span>
+              </div>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" style="width:25%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="kelas-stat-header">
+                <span class="kls">Kelas 2 (Awwaliyah)</span>
+                <span class="cnt">28 santri</span>
+              </div>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" style="width:22%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="kelas-stat-header">
+                <span class="kls">Kelas 3 (Awwaliyah)</span>
+                <span class="cnt">24 santri</span>
+              </div>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" style="width:19%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="kelas-stat-header">
+                <span class="kls">Kelas 4 (Awwaliyah)</span>
+                <span class="cnt">22 santri</span>
+              </div>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" style="width:17%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Aktivitas Terbaru -->
+        <div class="card card-padded">
+          <div class="section-header">
+            <p class="section-title">Aktivitas Terbaru</p>
+          </div>
+          <div class="activity-list">
+            <div class="activity-item">
+              <div class="activity-icon add">
+                <i class="ph-bold ph-user-plus"></i>
+              </div>
+              <div class="activity-text">
+                <p class="activity-msg">Santri baru <strong>M. Rafi Al-Farisi</strong> ditambahkan ke Kelas 1</p>
+                <p class="activity-time">5 menit lalu</p>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon pay">
+                <i class="ph-bold ph-money"></i>
+              </div>
+              <div class="activity-text">
+                <p class="activity-msg">Pembayaran SPP <strong>Nurul Hidayah</strong> — Rp 150.000</p>
+                <p class="activity-time">32 menit lalu</p>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon edit">
+                <i class="ph-bold ph-pencil-simple"></i>
+              </div>
+              <div class="activity-text">
+                <p class="activity-msg">Absensi Kelas 3 diperbarui oleh <strong>Ust. Ridwan</strong></p>
+                <p class="activity-time">1 jam lalu</p>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon lock">
+                <i class="ph-bold ph-lock-key"></i>
+              </div>
+              <div class="activity-text">
+                <p class="activity-msg">Login baru dari perangkat tidak dikenal</p>
+                <p class="activity-time">2 jam lalu</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Donut Hafalan -->
+        <div class="card card-padded">
+          <div class="section-header">
+            <p class="section-title">Progress Hafalan</p>
+            <span class="section-action" onclick="navigateTo('hafalan')">Detail</span>
+          </div>
+          <div class="donut-wrap" style="justify-content:center;margin-bottom:4px;">
+            <canvas id="chart-hafalan" width="140" height="140"></canvas>
+            <div class="donut-center">
+              <p class="pct">72%</p>
+              <p class="lbl">rata-rata</p>
+            </div>
+          </div>
+          <div class="donut-info">
+            <div class="donut-info-row">
+              <span class="k">Target Juz 30</span>
+              <span class="v" style="color:#15803d;">89 santri</span>
+            </div>
+            <div class="donut-info-row">
+              <span class="k">Sedang Menghafal</span>
+              <span class="v" style="color:#b45309;">32 santri</span>
+            </div>
+            <div class="donut-info-row">
+              <span class="k">Belum Mulai</span>
+              <span class="v" style="color:#b91c1c;">7 santri</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- .dash-row-3 -->
+
+      <!-- Pengumuman Terbaru -->
+      <div class="card card-padded">
+        <div class="section-header">
+          <p class="section-title">Pengumuman Terbaru</p>
+          <span class="section-action" onclick="navigateTo('pengumuman')">
+            Kelola Pengumuman
+          </span>
+        </div>
+        <div class="announce-list">
+          <div class="announce-item">
+            <div class="announce-thumb red">
+              <i class="ph-bold ph-warning"></i>
+            </div>
+            <div class="announce-content">
+              <p class="announce-title">Libur Hari Raya Idul Adha 1446 H</p>
+              <p class="announce-meta">20 Mei 2025 · Oleh: Kepala Madrasah</p>
+              <p class="announce-snippet">
+                Madrasah diliburkan tanggal 7–9 Juni 2025 dalam rangka peringatan
+                Hari Raya Idul Adha. Kegiatan penyembelihan hewan kurban...
+              </p>
+            </div>
+          </div>
+          <div class="announce-item">
+            <div class="announce-thumb blue">
+              <i class="ph-bold ph-calendar-check"></i>
+            </div>
+            <div class="announce-content">
+              <p class="announce-title">Jadwal Imtihan Akhir Tahun 1446 H</p>
+              <p class="announce-meta">15 Mei 2025 · Oleh: Admin Data</p>
+              <p class="announce-snippet">
+                Imtihan akhir tahun akan dilaksanakan mulai 20–25 Juni 2025.
+                Seluruh santri diwajibkan hadir dan mempersiapkan diri...
+              </p>
+            </div>
+          </div>
+          <div class="announce-item">
+            <div class="announce-thumb green">
+              <i class="ph-bold ph-megaphone"></i>
+            </div>
+            <div class="announce-content">
+              <p class="announce-title">Pembukaan Pendaftaran Santri Baru 2025/2026</p>
+              <p class="announce-meta">10 Mei 2025 · Oleh: Admin Data</p>
+              <p class="announce-snippet">
+                Pendaftaran santri baru tahun ajaran 2025/2026 resmi dibuka
+                mulai 1 Juni 2025. Kuota terbatas, segera daftarkan...
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section><!-- #view-dashboard -->
+
+    <!-- ══════════════════════════════════════════════════════
+         SECTION: DATA SANTRI
+    ══════════════════════════════════════════════════════════ -->
+
+    <section id="view-data-santri" class="page-view">
+
+      <!-- Page Header -->
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Data Santri</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Menampilkan
+            <strong id="santri-count-shown">—</strong> santri
+            dari total <strong id="santri-count-total">—</strong> terdaftar
+          </p>
+        </div>
+        <div class="page-header-actions">
+          <button class="btn btn-outline btn-sm" id="btn-export-santri">
+            <i class="ph-bold ph-file-csv"></i> Export CSV
+          </button>
+          <button class="btn btn-primary btn-sm" id="btn-tambah-santri">
+            <i class="ph-bold ph-user-plus"></i> Tambah Santri
+          </button>
+        </div>
+      </div>
+
+      <!-- Sub-tabs -->
+      <div class="page-tabs">
+        <div class="page-tab active" data-subtab="all">Semua Santri</div>
+        <div class="page-tab" data-subtab="aktif">Aktif</div>
+        <div class="page-tab" data-subtab="cuti">Cuti</div>
+        <div class="page-tab" data-subtab="lulus">Lulus / Non-Aktif</div>
+      </div>
+
+      <!-- Toolbar Filter -->
+      <div class="table-toolbar">
+        <div class="toolbar-search">
+          <i class="ph-bold ph-magnifying-glass"></i>
+          <input type="text" id="santri-search" placeholder="Cari nama, NIS, atau wali…" />
+        </div>
+        <div class="toolbar-filter">
+          <select id="santri-filter-kelas">
+            <option value="">Semua Kelas</option>
+            <option value="1">Kelas 1 (Awwaliyah)</option>
+            <option value="2">Kelas 2 (Awwaliyah)</option>
+            <option value="3">Kelas 3 (Awwaliyah)</option>
+            <option value="4">Kelas 4 (Awwaliyah)</option>
+          </select>
+        </div>
+        <div class="toolbar-filter">
+          <select id="santri-filter-status">
+            <option value="">Semua Status</option>
+            <option value="Aktif">Aktif</option>
+            <option value="Cuti">Cuti</option>
+            <option value="Lulus">Lulus</option>
+            <option value="Non-Aktif">Non-Aktif</option>
+          </select>
+        </div>
+        <div class="toolbar-filter">
+          <select id="santri-filter-jk">
+            <option value="">L &amp; P</option>
+            <option value="L">Laki-laki</option>
+            <option value="P">Perempuan</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Tabel Santri -->
+      <div class="card">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:36px;">#</th>
+                <th>Nama Santri</th>
+                <th>NIS</th>
+                <th>Kelas</th>
+                <th>Jenis Kelamin</th>
+                <th>Nama Wali</th>
+                <th>Status</th>
+                <th style="text-align:center;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="santri-tbody">
+              <!-- Diisi oleh app.js (Tahap 2C) -->
+            </tbody>
+          </table>
+        </div>
+        <!-- Paginasi -->
+        <div class="pagination">
+          <p class="pagination-info">—</p>
+          <div class="pagination-pages"></div>
+        </div>
+      </div>
+
+    </section><!-- #view-data-santri -->
+
+<!-- ══════════════════════════════════════════════════════
+     VIEW: KELAS / TINGKATAN
+══════════════════════════════════════════════════════════ -->
+
+<section id="view-kelas-tingkatan" class="page-view">
+
+  <div class="page-header-row">
+    <div>
+      <h2 class="section-title" style="font-size:18px;">
+        Kelas &amp; Tingkatan
+      </h2>
+      <p style="font-size:13px;color:var(--clr-text-muted);
+                margin-top:3px;">
+        Kelola kelas, wali kelas, kapasitas, dan data santri
+        per tingkatan.
+      </p>
+    </div>
+    <div class="page-header-actions">
+      <button class="btn btn-primary btn-sm"
+              id="btn-tambah-kelas">
+        <i class="ph-bold ph-plus"></i> Tambah Kelas
+      </button>
+    </div>
+  </div>
+
+  <!-- Stat cards kelas -->
+  <div class="stat-grid" style="margin-bottom:20px;">
+    <div class="stat-card green">
+      <div class="stat-icon">
+        <i class="ph-bold ph-chalkboard-teacher"></i>
+      </div>
+      <div class="stat-content">
+        <p class="stat-label">Total Kelas Aktif</p>
+        <p class="stat-value" id="kls-sc-total">—</p>
+        <p class="stat-change up"
+           id="kls-sc-total-sub">tingkatan</p>
+      </div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-icon">
+        <i class="ph-bold ph-student"></i>
+      </div>
+      <div class="stat-content">
+        <p class="stat-label">Total Santri Terdaftar</p>
+        <p class="stat-value" id="kls-sc-santri">—</p>
+        <p class="stat-change up"
+           id="kls-sc-santri-sub">santri aktif</p>
+      </div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-icon">
+        <i class="ph-bold ph-users"></i>
+      </div>
+      <div class="stat-content">
+        <p class="stat-label">Rata-rata per Kelas</p>
+        <p class="stat-value" id="kls-sc-avg">—</p>
+        <p class="stat-change"
+           style="color:var(--clr-text-muted);">
+          santri/kelas
+        </p>
+      </div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-icon">
+        <i class="ph-bold ph-warning-circle"></i>
+      </div>
+      <div class="stat-content">
+        <p class="stat-label">Kapasitas Terpakai</p>
+        <p class="stat-value" id="kls-sc-kapasitas">—</p>
+        <p class="stat-change"
+           style="color:var(--clr-text-muted);">
+          dari total kapasitas
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grid Kartu Kelas -->
+  <div id="kls-grid" class="kls-grid">
+    <!-- Diisi app.kelas.js -->
+  </div>
+
+  <!-- Modal: Tambah/Edit Kelas -->
+  <div class="modal-overlay" id="modal-kelas-form">
+    <div class="modal-dialog" style="max-width:480px;">
+      <div class="modal-header">
+        <div class="modal-header-icon">
+          <i class="ph-bold ph-chalkboard-teacher"></i>
+        </div>
+        <h3 class="modal-title" id="modal-kls-title">
+          Tambah Kelas
+        </h3>
+        <button class="modal-close"
+                data-close-modal="modal-kelas-form">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="form-kelas" autocomplete="off">
+          <input type="hidden" id="kls-edit-id" />
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="kls-kode">
+                Kode Kelas
+                <span style="color:var(--clr-danger);">*</span>
+              </label>
+              <input type="text" id="kls-kode"
+                     class="form-control"
+                     placeholder="Contoh: KLS-1" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="kls-tingkat">
+                Tingkat
+                <span style="color:var(--clr-danger);">*</span>
+              </label>
+              <select id="kls-tingkat" class="form-control">
+                <option value="">— Pilih —</option>
+                <option value="1">Tingkat 1</option>
+                <option value="2">Tingkat 2</option>
+                <option value="3">Tingkat 3</option>
+                <option value="4">Tingkat 4</option>
+                <option value="5">Tingkat 5</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="kls-nama">
+              Nama Kelas
+              <span style="color:var(--clr-danger);">*</span>
+            </label>
+            <input type="text" id="kls-nama"
+                   class="form-control"
+                   placeholder="Contoh: Kelas 1 (Ula)" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="kls-kapasitas">
+                Kapasitas
+              </label>
+              <input type="number" id="kls-kapasitas"
+                     class="form-control"
+                     value="30" min="1" max="60" />
+            </div>
+            <div class="form-group">
+              <label class="form-label"
+                     for="kls-tahun-ajaran">
+                Tahun Ajaran
+              </label>
+              <input type="text" id="kls-tahun-ajaran"
+                     class="form-control"
+                     placeholder="2024/2025" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label"
+                   for="kls-wali-kelas">
+              Wali Kelas
+            </label>
+            <select id="kls-wali-kelas" class="form-control">
+              <option value="">— Pilih Ustadz —</option>
+              <!-- Diisi JS -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="kls-deskripsi">
+              Deskripsi
+            </label>
+            <textarea id="kls-deskripsi"
+                      class="form-control" rows="2"
+                      placeholder="Opsional"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="kls-aktif"
+                       value="true" checked />
+                <span>Aktif</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="kls-aktif"
+                       value="false" />
+                <span>Non-Aktif</span>
+              </label>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline"
+                data-close-modal="modal-kelas-form">
+          <i class="ph-bold ph-x"></i> Batal
+        </button>
+        <button class="btn btn-primary"
+                id="btn-simpan-kelas">
+          <i class="ph-bold ph-floppy-disk"></i>
+          <span id="btn-simpan-kls-label">Simpan</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</section><!-- #view-kelas-tingkatan -->
+
+<!-- ══════════════════════════════════════════════════════
+     VIEW: DATA WALI SANTRI
+══════════════════════════════════════════════════════════ -->
+
+<section id="view-data-wali" class="page-view">
+
+  <div class="page-header-row">
+    <div>
+      <h2 class="section-title" style="font-size:18px;">
+        Data Wali Santri
+      </h2>
+      <p style="font-size:13px;color:var(--clr-text-muted);
+                margin-top:3px;">
+        Direktori kontak wali santri aktif.
+      </p>
+    </div>
+    <div class="page-header-actions">
+      <button class="btn-export excel"
+              id="btn-export-wali">
+        <i class="ph-bold ph-file-csv"></i> Export CSV
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter -->
+  <div class="table-toolbar" style="margin-bottom:14px;">
+    <div class="toolbar-search">
+      <i class="ph-bold ph-magnifying-glass"></i>
+      <input type="text" id="wali-search"
+             placeholder="Cari nama wali, santri, atau no HP…" />
+    </div>
+    <div class="toolbar-filter">
+      <select id="wali-filter-kelas">
+        <option value="">Semua Kelas</option>
+        <option value="1">Kelas 1</option>
+        <option value="2">Kelas 2</option>
+        <option value="3">Kelas 3</option>
+        <option value="4">Kelas 4</option>
+        <option value="5">Kelas 5</option>
+      </select>
+    </div>
+    <div class="toolbar-filter">
+      <select id="wali-filter-hub">
+        <option value="">Semua Hubungan</option>
+        <option value="Ayah">Ayah</option>
+        <option value="Ibu">Ibu</option>
+        <option value="Kakak">Kakak</option>
+        <option value="Wali">Wali</option>
+      </select>
+    </div>
+    <span id="wali-count-info"
+          style="font-size:13px;color:var(--clr-text-muted);
+                 margin-left:auto;">—</span>
+  </div>
+
+  <!-- Tabel Wali -->
+  <div class="card">
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px;text-align:center;">#</th>
+            <th>Nama Wali</th>
+            <th style="width:100px;">Hubungan</th>
+            <th>Nama Santri</th>
+            <th style="width:90px;text-align:center;">
+              Kelas
+            </th>
+            <th>No. HP</th>
+            <th>Pekerjaan</th>
+            <th style="width:80px;text-align:center;">
+              Aksi
+            </th>
+          </tr>
+        </thead>
+        <tbody id="tbody-wali">
+          <!-- Diisi JS -->
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <p class="pagination-info"
+         id="wali-pagination-info">—</p>
+      <div class="pagination-pages"
+           id="wali-pager"></div>
+    </div>
+  </div>
+
+</section><!-- #view-data-wali -->
+
+<!-- ══════════════════════════════════════════════════════
+     VIEW: RIWAYAT PINDAH / LULUS
+══════════════════════════════════════════════════════════ -->
+
+<section id="view-riwayat-mutasi" class="page-view">
+
+  <div class="page-header-row">
+    <div>
+      <h2 class="section-title" style="font-size:18px;">
+        Riwayat Pindah / Lulus
+      </h2>
+      <p style="font-size:13px;color:var(--clr-text-muted);
+                margin-top:3px;">
+        Catat dan pantau mutasi santri: pindah, lulus,
+        keluar, atau aktif kembali.
+      </p>
+    </div>
+    <div class="page-header-actions">
+      <button class="btn-export excel"
+              id="btn-export-mutasi">
+        <i class="ph-bold ph-file-csv"></i> Export CSV
+      </button>
+      <button class="btn btn-primary btn-sm"
+              id="btn-tambah-mutasi">
+        <i class="ph-bold ph-plus"></i> Catat Mutasi
+      </button>
+    </div>
+  </div>
+
+  <!-- Stat Cards Mutasi -->
+  <div class="rekap-stats" style="margin-bottom:20px;">
+    <div class="rekap-stat-card rsc-blue">
+      <div class="rsc-label">
+        <i class="ph-bold ph-graduation-cap"></i> Lulus
+      </div>
+      <div class="rsc-val" id="mut-sc-lulus">—</div>
+      <div class="rsc-sub">santri</div>
+    </div>
+    <div class="rekap-stat-card rsc-yellow">
+      <div class="rsc-label">
+        <i class="ph-bold ph-arrows-left-right"></i> Pindah
+      </div>
+      <div class="rsc-val" id="mut-sc-pindah">—</div>
+      <div class="rsc-sub">santri</div>
+    </div>
+    <div class="rekap-stat-card rsc-red">
+      <div class="rsc-label">
+        <i class="ph-bold ph-sign-out"></i> Keluar
+      </div>
+      <div class="rsc-val" id="mut-sc-keluar">—</div>
+      <div class="rsc-sub">santri</div>
+    </div>
+    <div class="rekap-stat-card rsc-green">
+      <div class="rsc-label">
+        <i class="ph-bold ph-arrow-u-up-left"></i>
+        Aktif Kembali
+      </div>
+      <div class="rsc-val" id="mut-sc-aktif">—</div>
+      <div class="rsc-sub">santri</div>
+    </div>
+  </div>
+
+  <!-- Filter -->
+  <div class="filter-bar" style="margin-bottom:16px;">
+    <div class="filter-group">
+      <label>Jenis:</label>
+      <select id="mut-filter-jenis">
+        <option value="">Semua</option>
+        <option value="Lulus">Lulus</option>
+        <option value="Pindah">Pindah</option>
+        <option value="Keluar">Keluar</option>
+        <option value="Aktif Kembali">Aktif Kembali</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Dari:</label>
+      <input type="date" id="mut-filter-dari"
+             style="height:36px;padding:0 10px;
+                    border:1.5px solid #d8e6dc;
+                    border-radius:7px;font-size:13px;
+                    font-family:inherit;
+                    background:var(--clr-body-bg);" />
+    </div>
+    <div class="filter-group">
+      <label>Sampai:</label>
+      <input type="date" id="mut-filter-sampai"
+             style="height:36px;padding:0 10px;
+                    border:1.5px solid #d8e6dc;
+                    border-radius:7px;font-size:13px;
+                    font-family:inherit;
+                    background:var(--clr-body-bg);" />
+    </div>
+    <div class="toolbar-search"
+         style="max-width:240px;">
+      <i class="ph-bold ph-magnifying-glass"></i>
+      <input type="text" id="mut-search"
+             placeholder="Cari nama santri…" />
+    </div>
+  </div>
+
+  <!-- Tabel Mutasi -->
+  <div class="card">
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px;text-align:center;">#</th>
+            <th>Nama Santri</th>
+            <th style="width:80px;">NIS</th>
+            <th style="width:120px;text-align:center;">
+              Jenis Mutasi
+            </th>
+            <th style="width:100px;text-align:center;">
+              Dari Kelas
+            </th>
+            <th style="width:100px;text-align:center;">
+              Ke Kelas
+            </th>
+            <th style="width:110px;text-align:center;">
+              Tanggal
+            </th>
+            <th>Alasan</th>
+            <th style="width:80px;text-align:center;">
+              Aksi
+            </th>
+          </tr>
+        </thead>
+        <tbody id="tbody-mutasi">
+          <!-- Diisi JS -->
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <p class="pagination-info"
+         id="mut-pagination-info">—</p>
+      <div class="pagination-pages"
+           id="mut-pager"></div>
+    </div>
+  </div>
+
+  <!-- Modal: Catat Mutasi -->
+  <div class="modal-overlay" id="modal-mutasi-form">
+    <div class="modal-dialog" style="max-width:500px;">
+      <div class="modal-header">
+        <div class="modal-header-icon">
+          <i class="ph-bold ph-arrows-left-right"></i>
+        </div>
+        <h3 class="modal-title" id="modal-mut-title">
+          Catat Mutasi Santri
+        </h3>
+        <button class="modal-close"
+                data-close-modal="modal-mutasi-form">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="form-mutasi" autocomplete="off">
+          <input type="hidden" id="mut-edit-id" />
+
+          <div class="form-group">
+            <label class="form-label" for="mut-form-santri">
+              Santri
+              <span style="color:var(--clr-danger);">*</span>
+            </label>
+            <select id="mut-form-santri" class="form-control">
+              <option value="">— Pilih Santri —</option>
+              <!-- Diisi JS -->
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="mut-form-jenis">
+                Jenis Mutasi
+                <span style="color:var(--clr-danger);">*</span>
+              </label>
+              <select id="mut-form-jenis" class="form-control">
+                <option value="Lulus">Lulus</option>
+                <option value="Pindah">Pindah</option>
+                <option value="Keluar">Keluar</option>
+                <option value="Aktif Kembali">
+                  Aktif Kembali
+                </option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="mut-form-tgl">
+                Tanggal
+                <span style="color:var(--clr-danger);">*</span>
+              </label>
+              <input type="date" id="mut-form-tgl"
+                     class="form-control" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label"
+                     for="mut-form-dari">
+                Dari Kelas
+              </label>
+              <select id="mut-form-dari" class="form-control">
+                <option value="">— Pilih —</option>
+                <option value="1">Kelas 1</option>
+                <option value="2">Kelas 2</option>
+                <option value="3">Kelas 3</option>
+                <option value="4">Kelas 4</option>
+                <option value="5">Kelas 5</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="mut-form-ke">
+                Ke Kelas
+              </label>
+              <select id="mut-form-ke" class="form-control">
+                <option value="">— Tidak Pindah Kelas —</option>
+                <option value="1">Kelas 1</option>
+                <option value="2">Kelas 2</option>
+                <option value="3">Kelas 3</option>
+                <option value="4">Kelas 4</option>
+                <option value="5">Kelas 5</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="mut-form-alasan">
+              Alasan
+            </label>
+            <input type="text" id="mut-form-alasan"
+                   class="form-control"
+                   placeholder="Opsional" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"
+                   for="mut-form-ket">
+              Keterangan
+            </label>
+            <textarea id="mut-form-ket"
+                      class="form-control" rows="2"
+                      placeholder="Opsional"></textarea>
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline"
+                data-close-modal="modal-mutasi-form">
+          <i class="ph-bold ph-x"></i> Batal
+        </button>
+        <button class="btn btn-primary"
+                id="btn-simpan-mutasi">
+          <i class="ph-bold ph-floppy-disk"></i>
+          <span id="btn-simpan-mut-label">Simpan</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</section><!-- #view-riwayat-mutasi -->
+
+    <!-- ══════════════════════════════════════════════════════
+         VIEW: ABSENSI SANTRI
+    ══════════════════════════════════════════════════════════ -->
+
+    <section id="view-absensi-santri" class="page-view">
+
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">
+            Absensi Santri
+          </h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Catat kehadiran, lihat rekap, dan buku absen bulanan.
+          </p>
+        </div>
+      </div>
+
+      <div class="page-tabs" id="absen-tabs">
+        <div class="page-tab active" data-absen-tab="harian">
+          <i class="ph-bold ph-pencil-line" style="font-size:14px;margin-right:5px;"></i>
+          Input Harian
+        </div>
+        <div class="page-tab" data-absen-tab="rekap">
+          <i class="ph-bold ph-chart-bar" style="font-size:14px;margin-right:5px;"></i>
+          Rekap Bulanan
+        </div>
+        <div class="page-tab" data-absen-tab="buku">
+          <i class="ph-bold ph-book-open-text" style="font-size:14px;margin-right:5px;"></i>
+          Buku Absen
+        </div>
+      </div>
+
+      <div id="absen-panel-harian" class="absen-panel">
+
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label>Tanggal:</label>
+            <input type="date" id="abs-tgl" /> </div>
+          <div class="filter-group">
+            <label>Kelas:</label>
+            <select id="abs-kelas">
+              <option value="">— Pilih Kelas —</option>
+              <option value="1">Kelas 1 (Awwaliyah)</option>
+              <option value="2">Kelas 2 (Awwaliyah)</option>
+              <option value="3">Kelas 3 (Awwaliyah)</option>
+              <option value="4">Kelas 4 (Awwaliyah)</option>
+            </select>
+          </div>
+          <button class="btn btn-outline btn-sm" id="btn-muat-absen" style="margin-left:auto;">
+            <i class="ph-bold ph-arrows-clockwise"></i> Muat Ulang
+          </button>
+        </div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center;">
+          <span style="font-size:12.5px;font-weight:600;color:var(--clr-text-sub);">Hari ini:</span>
+          
+          <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:12.5px;font-weight:600;background:rgba(34,197,94,.12);color:#15803d;">
+            Hadir <span id="abs-count-H">0</span>
+          </span>
+          <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:12.5px;font-weight:600;background:rgba(245,158,11,.12);color:#92400e;">
+            Sakit <span id="abs-count-S">0</span>
+          </span>
+          <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:12.5px;font-weight:600;background:rgba(59,130,246,.12);color:#1d4ed8;">
+            Izin <span id="abs-count-I">0</span>
+          </span>
+          <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:12.5px;font-weight:600;background:rgba(239,68,68,.12);color:#b91c1c;">
+            Alpha <span id="abs-count-A">0</span>
+          </span>
+          <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:12.5px;font-weight:600;background:rgba(139,92,246,.12);color:#6d28d9;">
+            Terlambat <span id="abs-count-T">0</span>
+          </span>
+
+          <span style="margin-left:auto;font-size:13px;font-weight:700;">
+            Hadir: <span id="abs-pct-hadir" style="color:var(--clr-primary);">—</span>
+          </span>
+          <span id="absen-hari-info" style="font-size:12px;color:var(--clr-text-muted);">—</span>
+        </div>
+
+        <div class="card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:32px;text-align:center;">#</th>
+                  <th style="width:72px;">NIS</th>
+                  <th>Nama Santri</th>
+                  <th style="width:220px;">Status</th>
+                  <th>Keterangan</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-absen-harian">
+                <tr>
+                  <td colspan="5" style="text-align:center;padding:40px;color:var(--clr-text-muted);">
+                    <i class="ph-bold ph-arrow-up" style="font-size:24px;display:block;margin-bottom:8px;opacity:.3;"></i>
+                    Pilih kelas dan tanggal untuk memuat daftar santri.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid rgba(26,107,60,.07);background:rgba(244,246,240,.5);">
+            <button class="btn btn-outline btn-sm" id="btn-reset-absen">
+              <i class="ph-bold ph-arrow-counter-clockwise"></i> Reset ke H Semua
+            </button>
+            <button class="btn btn-primary" id="btn-simpan-absen">
+              <i class="ph-bold ph-floppy-disk"></i> Simpan Absensi
+            </button>
+          </div>
+        </div>
+
+      </div><div id="absen-panel-rekap" class="absen-panel" style="display:none;">
+
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label>Bulan:</label>
+            <input type="month" id="rekap-bulan" />
+          </div>
+          <div class="filter-group">
+            <label>Kelas:</label>
+            <select id="rekap-kelas">
+              <option value="">Semua Kelas</option>
+              <option value="1">Kelas 1 (Awwaliyah)</option>
+              <option value="2">Kelas 2 (Awwaliyah)</option>
+              <option value="3">Kelas 3 (Awwaliyah)</option>
+              <option value="4">Kelas 4 (Awwaliyah)</option>
+            </select>
+          </div>
+          <button class="btn btn-outline btn-sm" id="btn-export-rekap" style="margin-left:auto;">
+            <i class="ph-bold ph-file-csv"></i> Export CSV
+          </button>
+        </div>
+
+        <div id="rekap-stat-area"></div>
+
+        <div class="card" style="margin-bottom:20px;">
+          <div style="padding:16px 20px 0;border-bottom:1px solid rgba(26,107,60,.07);">
+            <p style="font-size:14px;font-weight:700;">Rekap Per Tanggal</p>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th style="text-align:center;">Total</th>
+                  <th style="text-align:center;color:#15803d;">H</th>
+                  <th style="text-align:center;color:#92400e;">S</th>
+                  <th style="text-align:center;color:#1d4ed8;">I</th>
+                  <th style="text-align:center;color:#b91c1c;">A</th>
+                  <th style="text-align:center;color:#6d28d9;">T</th>
+                  <th style="text-align:center;">% Hadir</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-rekap-harian">
+                <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--clr-text-muted);">Pilih bulan untuk melihat rekap.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="padding:16px 20px 0;border-bottom:1px solid rgba(26,107,60,.07);">
+            <p style="font-size:14px;font-weight:700;">Statistik Per Santri</p>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:32px;text-align:center;">#</th>
+                  <th style="width:80px;">NIS</th>
+                  <th>Nama</th>
+                  <th style="text-align:center;">Total</th>
+                  <th style="text-align:center;color:#15803d;">H</th>
+                  <th style="text-align:center;color:#92400e;">S</th>
+                  <th style="text-align:center;color:#1d4ed8;">I</th>
+                  <th style="text-align:center;color:#b91c1c;">A</th>
+                  <th style="text-align:center;">% Hadir</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-statistik-santri">
+                <tr><td colspan="9" style="text-align:center;padding:32px;color:var(--clr-text-muted);">Pilih bulan untuk melihat statistik per santri.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><div id="absen-panel-buku" class="absen-panel" style="display:none;">
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label>Kelas:</label>
+            <select id="buku-kelas">
+              <option value="">— Pilih Kelas —</option>
+              <option value="1">Kelas 1 (Awwaliyah)</option>
+              <option value="2">Kelas 2 (Awwaliyah)</option>
+              <option value="3">Kelas 3 (Awwaliyah)</option>
+              <option value="4">Kelas 4 (Awwaliyah)</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Bulan:</label>
+            <input type="month" id="buku-bulan" />
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-tampil-buku" style="margin-left:auto;">
+            <i class="ph-bold ph-magnifying-glass"></i> Tampilkan
+          </button>
+        </div>
+
+        <div class="card card-padded" id="buku-absen-wrap">
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <i class="ph-bold ph-book-open-text"></i>
+            </div>
+            <p class="empty-state-title">Pilih Kelas &amp; Bulan</p>
+            <p class="empty-state-msg">
+              Pilih kelas dan bulan di atas, lalu klik "Tampilkan" untuk membuka buku absen lengkap.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section><!-- #view-absensi-santri -->
+
+    <!-- VIEW: ABSENSI USTADZ -->
+
+    <!-- ══════════════════════════════════════════════════════
+         VIEW: REKAP ABSENSI
+    ══════════════════════════════════════════════════════════ -->
+
+    <section id="view-rekap-absensi" class="page-view">
+
+      <div class="page-header-row">
+        <div>
+          <h2 class="page-title">Rekap Bulanan</h2>
+          <p class="page-title-sub">Laporan kehadiran santri seperti buku absen fisik</p>
+        </div>
+      </div>
+
+      <!-- Filter -->
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label><i class="ph-bold ph-chalkboard"></i> Kelas</label>
+          <select id="rekap-kelas">
+            <option value="1" selected>Kelas 1 (Awwaliyah)</option>
+            <option value="2">Kelas 2 (Awwaliyah)</option>
+            <option value="3">Kelas 3 (Awwaliyah)</option>
+            <option value="4">Kelas 4 (Awwaliyah)</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label><i class="ph-bold ph-calendar-blank"></i> Bulan/Tahun</label>
+          <input type="month" id="rekap-bulan" value="2024-05"
+            style="height:36px;padding:0 10px;border:1.5px solid #d8e6dc;border-radius:7px;font-size:13px;font-family:inherit;background:var(--clr-body-bg);" />
+        </div>
+      </div>
+
+      <!-- Stat cards -->
+      <div class="rekap-stats">
+        <div class="rekap-stat-card rsc-green">
+          <div class="rsc-label"><i class="ph-bold ph-check-circle"></i> Total Hadir</div>
+          <div class="rsc-val">218</div>
+          <div class="rsc-sub">dari 240 pertemuan</div>
+        </div>
+        <div class="rekap-stat-card rsc-yellow">
+          <div class="rsc-label"><i class="ph-bold ph-first-aid-kit"></i> Sakit</div>
+          <div class="rsc-val">10</div>
+          <div class="rsc-sub">4.2% dari total</div>
+        </div>
+        <div class="rekap-stat-card rsc-blue">
+          <div class="rsc-label"><i class="ph-bold ph-envelope-open"></i> Izin</div>
+          <div class="rsc-val">7</div>
+          <div class="rsc-sub">2.9% dari total</div>
+        </div>
+        <div class="rekap-stat-card rsc-red">
+          <div class="rsc-label"><i class="ph-bold ph-x-circle"></i> Alpa</div>
+          <div class="rsc-val">5</div>
+          <div class="rsc-sub">2.1% dari total</div>
+        </div>
+        <div class="rekap-stat-card rsc-purple">
+          <div class="rsc-label"><i class="ph-bold ph-clock-countdown"></i> Terlambat</div>
+          <div class="rsc-val">3</div>
+          <div class="rsc-sub">pertemuan tercatat</div>
+        </div>
+        <div class="rekap-stat-card" style="border-top:3px solid var(--clr-primary);">
+          <div class="rsc-label" style="color:var(--clr-primary);"><i class="ph-bold ph-percent"></i> Rata² Hadir</div>
+          <div class="rsc-val" style="color:var(--clr-primary);">90.8%</div>
+          <div class="rsc-sub">Kelas 1 · Mei 2024</div>
+        </div>
+      </div>
+
+      <!-- Tabel buku absen (scroll horizontal) -->
+      <div class="card">
+        <div style="padding:14px 18px 10px;border-bottom:1px solid rgba(26,107,60,.08);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <p style="font-size:14px;font-weight:700;">
+            <i class="ph-bold ph-book-open" style="color:var(--clr-primary);margin-right:5px;"></i>
+            Buku Absen — Kelas 1 (Ula) · Mei 2024
+          </p>
+          <span style="font-size:12px;color:var(--clr-text-muted);">
+            <i class="ph-bold ph-arrows-left-right"></i> Geser untuk lihat semua kolom
+          </span>
+        </div>
+        <div class="table-wrapper" style="overflow-x:auto;">
+          <table class="tbl-buku-absen">
+            <thead>
+              <tr style="background:rgba(26,107,60,.05);">
+                <th class="col-sticky col-s1">No</th>
+                <th class="col-sticky col-s2">NIS</th>
+                <th class="col-sticky col-s3">Nama Santri</th>
+                <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+                <th>6</th><th>7</th><th>8</th><th>9</th><th>10</th>
+                <th class="col-sum" style="background:rgba(34,197,94,.08);color:#15803d;">H</th>
+                <th class="col-sum" style="background:rgba(245,158,11,.08);color:#b45309;">S</th>
+                <th class="col-sum" style="background:rgba(59,130,246,.08);color:#1d4ed8;">I</th>
+                <th class="col-sum" style="background:rgba(239,68,68,.08);color:#b91c1c;">A</th>
+                <th class="col-sum" style="background:rgba(139,92,246,.08);color:#6d28d9;">T</th>
+                <th class="col-sum">% Hadir</th>
+                <th class="col-sum">Ket.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="col-sticky col-s1" style="color:var(--clr-text-muted);font-size:12px;">1</td>
+                <td class="col-sticky col-s2 td-nis">2024001</td>
+                <td class="col-sticky col-s3 td-nama">Muhammad Rafi Al-Farisi</td>
+                <td class="cel-H">H</td><td class="cel-H">H</td><td class="cel-lib">—</td>
+                <td class="cel-H">H</td><td class="cel-H">H</td><td class="cel-S">S</td>
+                <td class="cel-lib">—</td><td class="cel-H">H</td><td class="cel-H">H</td><td class="cel-I">I</td>
+                <td class="col-sum" style="font-weight:800;color:#15803d;">7</td>
+                <td class="col-sum" style="font-weight:800;color:#b45309;">1</td>
+                <td class="col-sum" style="font-weight:800;color:#1d4ed8;">1</td>
+                <td class="col-sum" style="font-weight:800;color:#b91c1c;">0</td>
+                <td class="col-sum" style="font-weight:800;color:#6d28d9;">0</td>
+                <td class="col-sum col-pct high">87.5%</td>
+                <td class="col-sum" style="font-size:12px;color:var(--clr-text-sub);">Baik</td>
+              </tr>
+              <tr>
+                <td class="col-sticky col-s1" style="color:var(--clr-text-muted);font-size:12px;">2</td>
+                <td class="col-sticky col-s2 td-nis">2022015</td>
+                <td class="col-sticky col-s3 td-nama">Siti Aisyah Rahmawati</td>
+                <td class="cel-H">H</td><td class="cel-H">H</td><td class="cel-lib">—</td>
+                <td class="cel-H">H</td><td class="cel-A">A</td><td class="cel-H">H</td>
+                <td class="cel-lib">—</td><td class="cel-H">H</td><td class="cel-T">T</td><td class="cel-H">H</td>
+                <td class="col-sum" style="font-weight:800;color:#15803d;">7</td>
+                <td class="col-sum" style="font-weight:800;color:#b45309;">0</td>
+                <td class="col-sum" style="font-weight:800;color:#1d4ed8;">0</td>
+                <td class="col-sum" style="font-weight:800;color:#b91c1c;">1</td>
+                <td class="col-sum" style="font-weight:800;color:#6d28d9;">1</td>
+                <td class="col-sum col-pct mid">75.0%</td>
+                <td class="col-sum" style="font-size:12px;color:var(--clr-text-sub);">Cukup</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr style="background:rgba(26,107,60,.04);font-weight:700;font-size:12px;">
+                <td colspan="3" class="col-sticky col-s1" style="text-align:right;padding-right:12px;color:var(--clr-primary);">TOTAL</td>
+                <td colspan="10" style="color:var(--clr-text-muted);text-align:center;">—</td>
+                <td class="col-sum" style="color:#15803d;">14</td>
+                <td class="col-sum" style="color:#b45309;">1</td>
+                <td class="col-sum" style="color:#1d4ed8;">1</td>
+                <td class="col-sum" style="color:#b91c1c;">1</td>
+                <td class="col-sum" style="color:#6d28d9;">1</td>
+                <td class="col-sum" style="color:var(--clr-primary);">81.3%</td>
+                <td class="col-sum">—</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div><!-- .card -->
+
+    </section><!-- #view-rekap-absensi -->
+
+    <!-- VIEW: IZIN / SAKIT / ALPHA -->
+
+    <!-- ══════════════════════════════════════════════════════
+         SECTION: AKADEMIK
+    ══════════════════════════════════════════════════════════ -->
+
+    <!-- VIEW: KURIKULUM -->
+
+    <!-- VIEW: JADWAL MENGAJAR -->
+
+    <!-- VIEW: MATA PELAJARAN -->
+
+    <!-- VIEW: NILAI SANTRI -->
+
+<!-- ══════════════════════════════════════════════════════
+     VIEW: NILAI SANTRI
+══════════════════════════════════════════════════════════ -->
+<section id="view-nilai-santri" class="page-view">
+
+  <!-- Page Header -->
+  <div class="page-header-row">
+    <div>
+      <h2 class="section-title" style="font-size:18px;">
+        Nilai Santri
+      </h2>
+      <p style="font-size:13px;color:var(--clr-text-muted);
+                margin-top:3px;">
+        Input nilai ujian, rekap per kelas, dan statistik
+        pencapaian santri.
+      </p>
+    </div>
+    <div class="page-header-actions">
+      <button class="btn-export excel" id="btn-export-nilai">
+        <i class="ph-bold ph-file-csv"></i> Export CSV
+      </button>
+    </div>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stat-grid" style="margin-bottom:20px;">
+
+    <div class="stat-card green">
+      <div class="stat-icon">
+        <i class="ph-bold ph-chart-line-up"></i>
+      </div>
+      <div class="stat-content">
+        <p class="stat-label">Rata-rata Nilai</p>
+        <p class="stat-value" id="sc-nilai-rata">—</p>
+        <p class="stat-change" id="sc-nilai-rata-info"
+           style="color:var(--clr-text-muted);">—</p>
+      </div>
+    </div>
+
+    <div class="stat-card blue">
+      <div class="stat-icon">
+        <i class="ph-bold ph-check-circle"></i>
+      </div>
+      <div class="stat-content">
+        <p class="stat-label">Di Atas KKM</p>
+        <p class="stat-value" id="sc-nilai-lulus">—</p>
+        <p class="stat-change up" id="sc-nilai-lulus-pct">—</p>
+      </div>
+    </div>
+
+    <div class="stat-card red">
+      <div class="stat-icon">
+        <i class="ph-bold ph-warning-circle"></i>
+      </div>
+      <div class="stat-content">
+        <p class="stat-label">Di Bawah KKM</p>
+        <p class="stat-value" id="sc-nilai-bl">—</p>
+        <p class="stat-change down" id="sc-nilai-bl-pct">—</p>
+      </div>
+    </div>
+
+    <div class="stat-card orange">
+      <div class="stat-icon">
+        <i class="ph-bold ph-list-numbers"></i>
+      </div>
+      <div class="stat-content">
+        <p class="stat-label">Total Data Nilai</p>
+        <p class="stat-value" id="sc-nilai-total">—</p>
+        <p class="stat-change" id="sc-nilai-total-info"
+           style="color:var(--clr-text-muted);">—</p>
+      </div>
+    </div>
+
+  </div><!-- .stat-grid -->
+
+  <!-- Tabs -->
+  <div class="page-tabs">
+    <div class="page-tab active" data-nilai-tab="input">
+      <i class="ph-bold ph-pencil-line"
+         style="font-size:13px;margin-right:5px;"></i>
+      Input Nilai
+    </div>
+    <div class="page-tab" data-nilai-tab="rekap">
+      <i class="ph-bold ph-table"
+         style="font-size:13px;margin-right:5px;"></i>
+      Rekap Nilai
+    </div>
+    <div class="page-tab" data-nilai-tab="statistik">
+      <i class="ph-bold ph-chart-bar"
+         style="font-size:13px;margin-right:5px;"></i>
+      Statistik
+    </div>
+  </div>
+
+  <!-- Datalist periode (shared) -->
+  <datalist id="periode-nilai-list">
+    <option value="2024/2025-1">2025/2026 Semester 1</option>
+    <option value="2024/2025-2">2025/2026 Semester 2</option>
+    <option value="2025/2026-1">2025/2026 Semester 1</option>
+    <option value="2025/2026-2">2025/2026 Semester 2</option>
+  </datalist>
+
+  <!-- ══════════════════════════════════════════════
+       PANEL: INPUT NILAI
+  ══════════════════════════════════════════════════ -->
+  <div id="nilai-panel-input" class="nilai-panel">
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label>Kelas:</label>
+        <select id="input-nilai-kelas">
+          <option value="">— Pilih Kelas —</option>
+          <option value="1">Kelas 1 (Awwaliyah)</option>
+          <option value="2">Kelas 2 (Awwaliyah)</option>
+          <option value="3">Kelas 3 (Awwaliyah)</option>
+          <option value="4">Kelas 4 (Awwaliyah)</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Mata Pelajaran:</label>
+        <select id="input-nilai-mapel">
+          <option value="">— Pilih Mapel —</option>
+          <option value="Al-Qur'an / Tahfidz">Al-Qur'an / Tahfidz</option>
+          <option value="Tajwid">Tajwid</option>
+          <option value="Fiqih">Fiqih</option>
+          <option value="Aqidah">Aqidah</option>
+          <option value="Akhlak">Akhlak</option>
+          <option value="Hadits">Hadits</option>
+          <option value="Tafsir">Tafsir</option>
+          <option value="Nahwu">Nahwu</option>
+          <option value="Sharaf">Sharaf</option>
+          <option value="Bahasa Arab">Bahasa Arab</option>
+          <option value="Sejarah Islam">Sejarah Islam</option>
+          <option value="Imla'">Imla'</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Jenis:</label>
+        <select id="input-nilai-jenis">
+          <option value="UTS">UTS</option>
+          <option value="UAS">UAS</option>
+          <option value="Harian">Harian</option>
+          <option value="Praktik">Praktik</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Periode:</label>
+        <input type="text" id="input-nilai-periode"
+               class="nilai-text-input"
+               placeholder="2025/2026-1"
+               list="periode-nilai-list" />
+      </div>
+      <div class="filter-group">
+        <label>KKM:</label>
+        <input type="number" id="input-nilai-kkm"
+               class="nilai-kkm-input"
+               value="70" min="0" max="100" />
+      </div>
+      <button class="btn btn-outline btn-sm"
+              id="btn-muat-nilai"
+              style="margin-left:auto;">
+        <i class="ph-bold ph-arrows-clockwise"></i> Muat
+      </button>
+      <button class="btn btn-primary btn-sm"
+              id="btn-simpan-semua-nilai">
+        <i class="ph-bold ph-floppy-disk"></i> Simpan Semua
+      </button>
+    </div>
+
+    <!-- Live counter row -->
+    <div class="nilai-counter-row">
+      <span>Santri:
+        <strong id="input-nilai-count">0</strong>
+      </span>
+      <span>Di atas KKM:
+        <strong id="input-nilai-lulus"
+                class="nilai-counter-lulus">0</strong>
+      </span>
+      <span>Di bawah KKM:
+        <strong id="input-nilai-bl"
+                class="nilai-counter-bl">0</strong>
+      </span>
+      <span>Rata-rata:
+        <strong id="input-nilai-avg">—</strong>
+      </span>
+    </div>
+
+    <!-- Tabel Input -->
+    <div class="card">
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:36px;text-align:center;">#</th>
+              <th>Nama Santri</th>
+              <th style="width:80px;">NIS</th>
+              <th style="width:130px;text-align:center;">
+                Nilai (0–100)
+              </th>
+              <th style="width:60px;text-align:center;">KKM</th>
+              <th style="width:100px;text-align:center;">Status</th>
+              <th>Keterangan</th>
+              <th style="width:60px;text-align:center;">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-input-nilai">
+            <tr>
+              <td colspan="8"
+                  style="text-align:center;padding:48px;
+                         color:var(--clr-text-muted);">
+                <i class="ph-bold ph-funnel"
+                   style="font-size:24px;display:block;
+                          margin-bottom:8px;opacity:.3;"></i>
+                Pilih kelas, mapel, jenis ujian &amp; periode,
+                lalu klik "Muat".
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- #nilai-panel-input -->
+
+  <!-- ══════════════════════════════════════════════
+       PANEL: REKAP NILAI
+  ══════════════════════════════════════════════════ -->
+  <div id="nilai-panel-rekap" class="nilai-panel"
+       style="display:none;">
+
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label>Kelas:</label>
+        <select id="rekap-nilai-kelas">
+          <option value="">— Pilih Kelas —</option>
+          <option value="1">Kelas 1 (Awwaliyah)</option>
+          <option value="2">Kelas 2 (Awwaliyah)</option>
+          <option value="3">Kelas 3 (Awwaliyah)</option>
+          <option value="4">Kelas 4 (Awwaliyah)</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Jenis:</label>
+        <select id="rekap-nilai-jenis">
+          <option value="UTS">UTS</option>
+          <option value="UAS">UAS</option>
+          <option value="Harian">Harian</option>
+          <option value="Praktik">Praktik</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Periode:</label>
+        <input type="text" id="rekap-nilai-periode"
+               class="nilai-text-input"
+               placeholder="2025/2026-1"
+               list="periode-nilai-list" />
+      </div>
+      <button class="btn btn-primary btn-sm"
+              id="btn-tampil-rekap"
+              style="margin-left:auto;">
+        <i class="ph-bold ph-magnifying-glass"></i> Tampilkan
+      </button>
+      <button class="btn-export excel"
+              id="btn-export-rekap-nilai">
+        <i class="ph-bold ph-file-csv"></i> Export
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="table-wrapper">
+        <table id="tbl-rekap-nilai">
+          <thead id="thead-rekap-nilai">
+            <!-- Diisi JS: kolom dinamis per mapel -->
+            <tr>
+              <th>#</th>
+              <th>Nama Santri</th>
+              <th>NIS</th>
+              <th style="text-align:center;padding:40px;
+                         color:var(--clr-text-muted);"
+                  colspan="99">
+                Pilih filter dan klik "Tampilkan"
+              </th>
+            </tr>
+          </thead>
+          <tbody id="tbody-rekap-nilai">
+            <!-- Diisi JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- #nilai-panel-rekap -->
+
+  <!-- ══════════════════════════════════════════════
+       PANEL: STATISTIK
+  ══════════════════════════════════════════════════ -->
+  <div id="nilai-panel-statistik" class="nilai-panel"
+       style="display:none;">
+
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label>Kelas:</label>
+        <select id="stat-nilai-kelas">
+          <option value="">Semua Kelas</option>
+          <option value="1">Kelas 1</option>
+          <option value="2">Kelas 2</option>
+          <option value="3">Kelas 3</option>
+          <option value="4">Kelas 4</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Mata Pelajaran:</label>
+        <select id="stat-nilai-mapel">
+          <option value="">Semua Mapel</option>
+          <option value="Al-Qur'an / Tahfidz">Al-Qur'an / Tahfidz</option>
+          <option value="Tajwid">Tajwid</option>
+          <option value="Fiqih">Fiqih</option>
+          <option value="Aqidah">Aqidah</option>
+          <option value="Akhlak">Akhlak</option>
+          <option value="Hadits">Hadits</option>
+          <option value="Tafsir">Tafsir</option>
+          <option value="Nahwu">Nahwu</option>
+          <option value="Sharaf">Sharaf</option>
+          <option value="Bahasa Arab">Bahasa Arab</option>
+          <option value="Sejarah Islam">Sejarah Islam</option>
+          <option value="Imla'">Imla'</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Jenis:</label>
+        <select id="stat-nilai-jenis">
+          <option value="">Semua Jenis</option>
+          <option value="UTS">UTS</option>
+          <option value="UAS">UAS</option>
+          <option value="Harian">Harian</option>
+          <option value="Praktik">Praktik</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Periode:</label>
+        <input type="text" id="stat-nilai-periode"
+               class="nilai-text-input"
+               placeholder="2024/2025-1"
+               list="periode-nilai-list" />
+      </div>
+    </div>
+
+    <!-- Chart + ringkasan -->
+    <div class="dash-row dash-row-2" style="margin-bottom:20px;">
+
+      <div class="card chart-card">
+        <div class="chart-header">
+          <div>
+            <p class="chart-title">Distribusi Nilai</p>
+            <p style="font-size:12px;color:var(--clr-text-muted);
+                      margin-top:2px;">
+              Sebaran nilai berdasarkan rentang
+            </p>
+          </div>
+        </div>
+        <canvas id="chart-distribusi-nilai" height="220"></canvas>
+      </div>
+
+      <!-- Ringkasan angka -->
+      <div class="card card-padded">
+        <p class="section-title" style="margin-bottom:16px;">
+          Ringkasan Statistik
+        </p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div class="nilai-stat-item nilai-stat-item--tinggi">
+            <span class="nilai-stat-item__label">Nilai Tertinggi</span>
+            <span class="nilai-stat-item__val"
+                  id="stat-nilai-tertinggi">—</span>
+          </div>
+          <div class="nilai-stat-item nilai-stat-item--avg">
+            <span class="nilai-stat-item__label">Rata-rata</span>
+            <span class="nilai-stat-item__val"
+                  id="stat-nilai-avg">—</span>
+          </div>
+          <div class="nilai-stat-item nilai-stat-item--rendah">
+            <span class="nilai-stat-item__label">Nilai Terendah</span>
+            <span class="nilai-stat-item__val"
+                  id="stat-nilai-terendah">—</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;
+                      gap:10px;margin-top:4px;">
+            <div class="nilai-kkm-box nilai-kkm-box--lulus">
+              <p class="nilai-kkm-box__label">Di Atas KKM</p>
+              <p class="nilai-kkm-box__val"
+                 id="stat-di-atas-kkm">—</p>
+            </div>
+            <div class="nilai-kkm-box nilai-kkm-box--bl">
+              <p class="nilai-kkm-box__label">Di Bawah KKM</p>
+              <p class="nilai-kkm-box__val"
+                 id="stat-di-bawah-kkm">—</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- .dash-row-2 -->
+
+    <!-- Tabel ranking -->
+    <div class="card">
+      <div style="padding:14px 20px;
+                  border-bottom:1px solid rgba(26,107,60,.08);">
+        <p style="font-size:14px;font-weight:700;">
+          Ranking Santri
+        </p>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:44px;text-align:center;">Rank</th>
+              <th>Nama Santri</th>
+              <th style="width:80px;">NIS</th>
+              <th style="width:80px;text-align:center;">Nilai</th>
+              <th style="width:60px;text-align:center;">KKM</th>
+              <th style="width:100px;text-align:center;">Status</th>
+              <th>Mata Pelajaran</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-statistik-nilai">
+            <tr>
+              <td colspan="7"
+                  style="text-align:center;padding:40px;
+                         color:var(--clr-text-muted);">
+                Pilih filter untuk melihat ranking santri.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- #nilai-panel-statistik -->
+
+  <!-- ══════════════════════════════════════════════
+       MODAL: INPUT / EDIT NILAI INDIVIDUAL
+  ══════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modal-nilai-form">
+    <div class="modal-dialog" style="max-width:480px;">
+
+      <div class="modal-header">
+        <div class="modal-header-icon">
+          <i class="ph-bold ph-exam"></i>
+        </div>
+        <h3 class="modal-title" id="modal-nilai-title">
+          Input Nilai
+        </h3>
+        <button class="modal-close"
+                data-close-modal="modal-nilai-form">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form id="form-nilai" autocomplete="off">
+          <input type="hidden" id="nilai-santri-id" />
+          <input type="hidden" id="nilai-edit-id" />
+
+          <div class="form-group">
+            <label class="form-label">Santri</label>
+            <input type="text" id="nilai-santri-nama"
+                   class="form-control"
+                   readonly
+                   style="background:rgba(26,107,60,.05);
+                          cursor:not-allowed;" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="nilai-mapel-modal">
+                Mata Pelajaran
+                <span style="color:var(--clr-danger);">*</span>
+              </label>
+              <select id="nilai-mapel-modal" class="form-control">
+                <option value="">— Pilih —</option>
+                <option value="Al-Qur'an / Tahfidz">
+                  Al-Qur'an / Tahfidz
+                </option>
+                <option value="Tajwid">Tajwid</option>
+                <option value="Fiqih">Fiqih</option>
+                <option value="Aqidah">Aqidah</option>
+                <option value="Akhlak">Akhlak</option>
+                <option value="Hadits">Hadits</option>
+                <option value="Tafsir">Tafsir</option>
+                <option value="Nahwu">Nahwu</option>
+                <option value="Sharaf">Sharaf</option>
+                <option value="Bahasa Arab">Bahasa Arab</option>
+                <option value="Sejarah Islam">Sejarah Islam</option>
+                <option value="Imla'">Imla'</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="nilai-jenis-modal">
+                Jenis Ujian
+                <span style="color:var(--clr-danger);">*</span>
+              </label>
+              <select id="nilai-jenis-modal" class="form-control">
+                <option value="UTS">UTS</option>
+                <option value="UAS">UAS</option>
+                <option value="Harian">Harian</option>
+                <option value="Praktik">Praktik</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="nilai-periode-modal">
+                Periode
+                <span style="color:var(--clr-danger);">*</span>
+              </label>
+              <input type="text" id="nilai-periode-modal"
+                     class="form-control"
+                     placeholder="2024/2025-1"
+                     list="periode-nilai-list" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="nilai-kkm-modal">
+                KKM
+              </label>
+              <input type="number" id="nilai-kkm-modal"
+                     class="form-control"
+                     value="70" min="0" max="100" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="nilai-angka-modal">
+              Nilai
+              <span style="color:var(--clr-danger);">*</span>
+            </label>
+            <input type="number" id="nilai-angka-modal"
+                   class="form-control nilai-angka-input"
+                   placeholder="0 – 100"
+                   min="0" max="100" step="0.5" />
+            <!-- Live preview status -->
+            <div id="nilai-status-preview"
+                 style="margin-top:8px;display:none;">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"
+                   for="nilai-keterangan-modal">
+              Keterangan
+            </label>
+            <textarea id="nilai-keterangan-modal"
+                      class="form-control" rows="2"
+                      placeholder="Opsional"></textarea>
+          </div>
+
+        </form>
+      </div><!-- .modal-body -->
+
+      <div class="modal-footer">
+        <button class="btn btn-outline"
+                data-close-modal="modal-nilai-form">
+          <i class="ph-bold ph-x"></i> Batal
+        </button>
+        <button class="btn btn-primary"
+                id="btn-simpan-nilai-modal">
+          <i class="ph-bold ph-floppy-disk"></i>
+          <span id="btn-simpan-nilai-label">Simpan Nilai</span>
+        </button>
+      </div>
+
+    </div>
+  </div><!-- #modal-nilai-form -->
+
+</section><!-- #view-nilai-santri -->
+
+<!-- ══════════════════════════════════════════════════════
+     VIEW: HAFALAN AL-QUR'AN
+══════════════════════════════════════════════════════════ -->
+<section id="view-hafalan" class="page-view">
+
+  <!-- Page Header -->
+  <div class="page-header-row">
+    <div>
+      <h2 class="section-title" style="font-size:18px;">
+        Hafalan Al-Qur'an
+      </h2>
+      <p style="font-size:13px;color:var(--clr-text-muted);
+                margin-top:3px;">
+        Pantau progress hafalan santri per juz &amp; surah.
+      </p>
+    </div>
+    <div class="page-header-actions">
+      <button class="btn-export excel" id="btn-export-hafalan">
+        <i class="ph-bold ph-file-csv"></i> Export CSV
+      </button>
+      <button class="btn btn-primary btn-sm"
+              id="btn-tambah-hafalan">
+        <i class="ph-bold ph-plus"></i> Catat Hafalan
+      </button>
+    </div>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stat-grid" style="margin-bottom:20px;">
+
+    <div class="stat-card green">
+      <div class="stat-icon">
+        <i class="ph-bold ph-book-open"></i>
+      </div>
+      <div class="stat-content">
+        <p class="stat-label">Total Juz Selesai</p>
+        <p class="stat-value" id="hf-sc-selesai">—</p>
+        <p class="stat-change up" id="hf-sc-selesai-sub">
+          dari semua santri
+        </p>
+      </div>
+    </div>
+
+    <div class="stat-card blue">
+      <div class="stat-icon">
+        <i class="ph-bold ph-student"></i>
+      </div>
+      <div class="stat-content">
+        <p class="stat-label">Santri Aktif Menghafal</p>
+        <p class="stat-value" id="hf-sc-aktif">—</p>
+        <p class="stat-change up" id="hf-sc-aktif-sub">
+          santri terdaftar
+        </p>
+      </div>
+    </div>
+
+    <div class="stat-card orange">
+      <div class="stat-icon">
+        <i class="ph-bold ph-chart-line-up"></i>
+      </div>
+      <div class="stat-content">
+        <p class="stat-label">Rata-rata Nilai Hafalan</p>
+        <p class="stat-value" id="hf-sc-nilai">—</p>
+        <p class="stat-change"
+           style="color:var(--clr-text-muted);">
+          Nilai setoran
+        </p>
+      </div>
+    </div>
+
+    <div class="stat-card purple">
+      <div class="stat-icon">
+        <i class="ph-bold ph-check-circle"></i>
+      </div>
+      <div class="stat-content">
+        <p class="stat-label">Santri Selesai Juz 30</p>
+        <p class="stat-value" id="hf-sc-juz30">—</p>
+        <p class="stat-change up"
+           id="hf-sc-juz30-sub">santri</p>
+      </div>
+    </div>
+
+  </div><!-- .stat-grid -->
+
+  <!-- Tabs -->
+  <div class="page-tabs">
+    <div class="page-tab active" data-hf-tab="ringkasan">
+      <i class="ph-bold ph-list-dashes"
+         style="font-size:13px;margin-right:5px;"></i>
+      Ringkasan Santri
+    </div>
+    <div class="page-tab" data-hf-tab="detail">
+      <i class="ph-bold ph-book-bookmark"
+         style="font-size:13px;margin-right:5px;"></i>
+      Detail per Juz
+    </div>
+    <div class="page-tab" data-hf-tab="progres">
+      <i class="ph-bold ph-chart-bar"
+         style="font-size:13px;margin-right:5px;"></i>
+      Grafik Progress
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       PANEL: RINGKASAN SANTRI
+  ══════════════════════════════════════════════════ -->
+  <div id="hf-panel-ringkasan" class="hf-panel">
+
+    <!-- Filter -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label>Kelas:</label>
+        <select id="hf-filter-kelas">
+          <option value="">Semua Kelas</option>
+          <option value="1">Kelas 1 (Ula)</option>
+          <option value="2">Kelas 2 (Wustho)</option>
+          <option value="3">Kelas 3 (Ulya)</option>
+          <option value="4">Kelas 4 (Ulya)</option>
+          <option value="5">Kelas 5 (Ulya)</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Min. Juz Selesai:</label>
+        <select id="hf-filter-min-juz">
+          <option value="0">Semua</option>
+          <option value="1">≥ 1 Juz</option>
+          <option value="5">≥ 5 Juz</option>
+          <option value="10">≥ 10 Juz</option>
+          <option value="20">≥ 20 Juz</option>
+          <option value="30">Juz 30 (Tamat)</option>
+        </select>
+      </div>
+      <div class="toolbar-search">
+        <i class="ph-bold ph-magnifying-glass"></i>
+        <input type="text" id="hf-search"
+               placeholder="Cari nama atau NIS santri…" />
+      </div>
+    </div>
+
+    <!-- Tabel Ringkasan -->
+    <div class="card">
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:44px;text-align:center;">#</th>
+              <th>Nama Santri</th>
+              <th style="width:80px;">NIS</th>
+              <th style="width:90px;text-align:center;">Kelas</th>
+              <th style="width:100px;text-align:center;">
+                Juz Selesai
+              </th>
+              <th style="width:180px;text-align:center;">
+                Progress
+              </th>
+              <th style="width:80px;text-align:center;">
+                Rata Nilai
+              </th>
+              <th style="width:110px;text-align:center;">
+                Tgl Setor
+              </th>
+              <th style="width:120px;text-align:center;">
+                Aksi
+              </th>
+            </tr>
+          </thead>
+          <tbody id="tbody-hf-ringkasan">
+            <tr>
+              <td colspan="9"
+                  style="text-align:center;padding:48px;
+                         color:var(--clr-text-muted);">
+                <i class="ph-bold ph-book-open"
+                   style="font-size:28px;display:block;
+                          margin-bottom:8px;opacity:.3;"></i>
+                Memuat data hafalan…
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <p class="pagination-info"
+           id="hf-pagination-info">—</p>
+        <div class="pagination-pages"
+             id="hf-pager"></div>
+      </div>
+    </div>
+
+  </div><!-- #hf-panel-ringkasan -->
+
+  <!-- ══════════════════════════════════════════════
+       PANEL: DETAIL PER JUZ
+  ══════════════════════════════════════════════════ -->
+  <div id="hf-panel-detail" class="hf-panel"
+       style="display:none;">
+
+    <!-- Filter -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label>Santri:</label>
+        <select id="hf-detail-santri">
+          <option value="">— Pilih Santri —</option>
+          <!-- Diisi JS -->
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Status:</label>
+        <select id="hf-detail-status">
+          <option value="">Semua</option>
+          <option value="Selesai">Selesai</option>
+          <option value="Proses">Sedang Proses</option>
+          <option value="Mengulang">Mengulang</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Grid Juz -->
+    <div id="hf-juz-grid" class="hf-juz-grid">
+      <div class="card" style="padding:48px;text-align:center;
+                               color:var(--clr-text-muted);">
+        <i class="ph-bold ph-arrow-up"
+           style="font-size:24px;display:block;
+                  margin-bottom:8px;opacity:.3;"></i>
+        Pilih santri untuk melihat detail hafalan per juz.
+      </div>
+    </div>
+
+    <!-- Tabel detail -->
+    <div class="card" style="margin-top:16px;">
+      <div style="padding:14px 20px;
+                  border-bottom:1px solid rgba(26,107,60,.08);">
+        <p style="font-size:14px;font-weight:700;"
+           id="hf-detail-title">
+          Detail Hafalan
+        </p>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:60px;text-align:center;">Juz</th>
+              <th>Surah</th>
+              <th style="width:100px;text-align:center;">
+                Status
+              </th>
+              <th style="width:80px;text-align:center;">
+                Nilai
+              </th>
+              <th style="width:110px;text-align:center;">
+                Tgl Setor
+              </th>
+              <th>Musyrif</th>
+              <th>Catatan</th>
+              <th style="width:90px;text-align:center;">
+                Aksi
+              </th>
+            </tr>
+          </thead>
+          <tbody id="tbody-hf-detail">
+            <tr>
+              <td colspan="8"
+                  style="text-align:center;padding:32px;
+                         color:var(--clr-text-muted);">
+                Pilih santri di atas.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- #hf-panel-detail -->
+
+  <!-- ══════════════════════════════════════════════
+       PANEL: GRAFIK PROGRESS
+  ══════════════════════════════════════════════════ -->
+  <div id="hf-panel-progres" class="hf-panel"
+       style="display:none;">
+
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label>Kelas:</label>
+        <select id="hf-chart-kelas">
+          <option value="">Semua Kelas</option>
+          <option value="1">Kelas 1</option>
+          <option value="2">Kelas 2</option>
+          <option value="3">Kelas 3</option>
+          <option value="4">Kelas 4</option>
+          <option value="5">Kelas 5</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="dash-row dash-row-2"
+         style="margin-bottom:20px;">
+
+      <!-- Bar chart: juz selesai per kelas -->
+      <div class="card chart-card">
+        <div class="chart-header">
+          <div>
+            <p class="chart-title">
+              Distribusi Juz Selesai per Kelas
+            </p>
+            <p style="font-size:12px;
+                      color:var(--clr-text-muted);
+                      margin-top:2px;">
+              Rata-rata juz yang telah diselesaikan
+            </p>
+          </div>
+        </div>
+        <canvas id="chart-hf-kelas" height="220"></canvas>
+      </div>
+
+      <!-- Donut: status hafalan keseluruhan -->
+      <div class="card card-padded">
+        <p class="section-title" style="margin-bottom:16px;">
+          Status Hafalan Keseluruhan
+        </p>
+        <div class="donut-wrap"
+             style="justify-content:center;margin-bottom:12px;">
+          <canvas id="chart-hf-status"
+                  width="160" height="160"></canvas>
+          <div class="donut-center">
+            <p class="pct" id="hf-donut-pct">—</p>
+            <p class="lbl">selesai</p>
+          </div>
+        </div>
+        <div class="donut-info">
+          <div class="donut-info-row">
+            <span class="k" style="display:flex;
+                                   align-items:center;gap:6px;">
+              <span style="width:10px;height:10px;
+                           border-radius:50%;
+                           background:#1a6b3c;
+                           display:inline-block;"></span>
+              Selesai
+            </span>
+            <span class="v" style="color:#15803d;"
+                  id="hf-leg-selesai">—</span>
+          </div>
+          <div class="donut-info-row">
+            <span class="k" style="display:flex;
+                                   align-items:center;gap:6px;">
+              <span style="width:10px;height:10px;
+                           border-radius:50%;
+                           background:#f59e0b;
+                           display:inline-block;"></span>
+              Sedang Proses
+            </span>
+            <span class="v" style="color:#b45309;"
+                  id="hf-leg-proses">—</span>
+          </div>
+          <div class="donut-info-row">
+            <span class="k" style="display:flex;
+                                   align-items:center;gap:6px;">
+              <span style="width:10px;height:10px;
+                           border-radius:50%;
+                           background:#8b5cf6;
+                           display:inline-block;"></span>
+              Mengulang
+            </span>
+            <span class="v" style="color:#7c3aed;"
+                  id="hf-leg-mengulang">—</span>
+          </div>
+          <div class="donut-info-row">
+            <span class="k" style="display:flex;
+                                   align-items:center;gap:6px;">
+              <span style="width:10px;height:10px;
+                           border-radius:50%;
+                           background:rgba(26,107,60,.15);
+                           display:inline-block;"></span>
+              Belum Mulai
+            </span>
+            <span class="v" style="color:var(--clr-text-muted);"
+                  id="hf-leg-belum">—</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Top 10 Ranking -->
+    <div class="card">
+      <div style="padding:14px 20px;
+                  border-bottom:1px solid rgba(26,107,60,.08);">
+        <p style="font-size:14px;font-weight:700;">
+          Top 10 Hafidz / Hafidzah
+        </p>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:44px;text-align:center;">
+                Rank
+              </th>
+              <th>Nama Santri</th>
+              <th style="width:80px;">NIS</th>
+              <th style="width:90px;text-align:center;">
+                Kelas
+              </th>
+              <th style="width:100px;text-align:center;">
+                Juz Selesai
+              </th>
+              <th style="width:180px;text-align:center;">
+                Progress
+              </th>
+              <th style="width:80px;text-align:center;">
+                Nilai
+              </th>
+            </tr>
+          </thead>
+          <tbody id="tbody-hf-top10">
+            <tr>
+              <td colspan="7"
+                  style="text-align:center;padding:32px;
+                         color:var(--clr-text-muted);">
+                Memuat data…
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- #hf-panel-progres -->
+
+  <!-- ══════════════════════════════════════════════
+       MODAL: CATAT / EDIT HAFALAN
+  ══════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modal-hafalan-form">
+    <div class="modal-dialog" style="max-width:520px;">
+
+      <div class="modal-header">
+        <div class="modal-header-icon">
+          <i class="ph-bold ph-book-open"></i>
+        </div>
+        <h3 class="modal-title" id="modal-hf-title">
+          Catat Hafalan
+        </h3>
+        <button class="modal-close"
+                data-close-modal="modal-hafalan-form">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form id="form-hafalan" autocomplete="off">
+          <input type="hidden" id="hf-edit-id" />
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="hf-form-santri">
+                Santri
+                <span style="color:var(--clr-danger);">*</span>
+              </label>
+              <select id="hf-form-santri"
+                      class="form-control">
+                <option value="">— Pilih Santri —</option>
+                <!-- Diisi JS -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="hf-form-juz">
+                Juz
+                <span style="color:var(--clr-danger);">*</span>
+              </label>
+              <select id="hf-form-juz" class="form-control">
+                <option value="">— Pilih —</option>
+                <!-- Diisi JS: 1–30 -->
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label"
+                     for="hf-form-surah-mulai">
+                Surah Mulai
+              </label>
+              <select id="hf-form-surah-mulai"
+                      class="form-control">
+                <option value="">— Pilih —</option>
+                <!-- Diisi JS -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label"
+                     for="hf-form-surah-selesai">
+                Surah Selesai
+              </label>
+              <select id="hf-form-surah-selesai"
+                      class="form-control">
+                <option value="">— Pilih —</option>
+                <!-- Diisi JS -->
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label"
+                     for="hf-form-status">
+                Status
+                <span style="color:var(--clr-danger);">*</span>
+              </label>
+              <select id="hf-form-status" class="form-control">
+                <option value="Proses">Sedang Proses</option>
+                <option value="Selesai">Selesai</option>
+                <option value="Mengulang">Mengulang</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label"
+                     for="hf-form-nilai">
+                Nilai Setoran
+              </label>
+              <input type="number" id="hf-form-nilai"
+                     class="form-control"
+                     placeholder="0–100"
+                     min="0" max="100" step="0.5" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label"
+                     for="hf-form-tgl">
+                Tanggal Setor
+              </label>
+              <input type="date" id="hf-form-tgl"
+                     class="form-control" />
+            </div>
+            <div class="form-group">
+              <label class="form-label"
+                     for="hf-form-musyrif">
+                Musyrif / Pengampu
+              </label>
+              <select id="hf-form-musyrif"
+                      class="form-control">
+                <option value="">— Pilih —</option>
+                <!-- Diisi JS -->
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"
+                   for="hf-form-catatan">
+              Catatan
+            </label>
+            <textarea id="hf-form-catatan"
+                      class="form-control" rows="2"
+                      placeholder="Opsional"></textarea>
+          </div>
+
+        </form>
+      </div><!-- .modal-body -->
+
+      <div class="modal-footer">
+        <button class="btn btn-outline"
+                data-close-modal="modal-hafalan-form">
+          <i class="ph-bold ph-x"></i> Batal
+        </button>
+        <button class="btn btn-primary"
+                id="btn-simpan-hafalan">
+          <i class="ph-bold ph-floppy-disk"></i>
+          <span id="btn-simpan-hf-label">Simpan</span>
+        </button>
+      </div>
+
+    </div>
+  </div><!-- #modal-hafalan-form -->
+
+</section><!-- #view-hafalan -->
+
+    <!-- VIEW: UJIAN / IMTIHAN -->
+
+    <!-- VIEW: RAPORT -->
+
+    <!-- VIEW: KENAIKAN TINGKAT -->
+
+    <!-- ══════════════════════════════════════════════════════
+         SECTION: KEUANGAN
+    ══════════════════════════════════════════════════════════ -->
+
+    <!-- VIEW: SYAHRIAH / SPP -->
+
+    <!-- VIEW: INFAQ & DONASI -->
+
+    <!-- VIEW: PENGELUARAN -->
+
+    <!-- ══════════════════════════════════════════════════════
+         VIEW: KAS MADRASAH
+    ══════════════════════════════════════════════════════════ -->
+
+    <section id="view-kas-madrasah" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">
+            Kas Madrasah
+          </h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Pencatatan pemasukan, pengeluaran, SPP & laporan keuangan.
+          </p>
+        </div>
+      </div>
+
+      <div class="page-tabs" id="keu-tabs">
+        <div class="page-tab active" data-keu-tab="kas">
+          <i class="ph-bold ph-receipt" style="font-size:14px;margin-right:5px;"></i>
+          Buku Kas
+        </div>
+        <div class="page-tab" data-keu-tab="spp">
+          <i class="ph-bold ph-money" style="font-size:14px;margin-right:5px;"></i>
+          SPP / Syahriah
+        </div>
+        <div class="page-tab" data-keu-tab="laporan">
+          <i class="ph-bold ph-chart-bar" style="font-size:14px;margin-right:5px;"></i>
+          Laporan Bulanan
+        </div>
+      </div>
+
+      <div id="keu-panel-kas" class="keu-panel">
+        
+      <div id="keu-stat-cards"></div>
+      <div class="filter-bar" style="margin-bottom:16px;">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:10px;">
+          <div class="filter-group">
+            <label style="font-size:12px;font-weight:600;color:var(--clr-text-sub);margin-right:6px;">
+              Bulan:
+            </label>
+            <input type="month" id="kas-filter-bulan" />
+          </div>
+
+          <select id="kas-filter-jenis" style="height:36px;padding:0 28px 0 10px;border:1.5px solid #d8e6dc;border-radius:7px;font-size:13px;font-family:inherit;background:var(--clr-body-bg);">
+            <option value="">Semua Jenis</option>
+            <option value="masuk">Pemasukan</option>
+            <option value="keluar">Pengeluaran</option>
+          </select>
+      </div>
+
+          <div class="toolbar-search">
+            <i class="ph-bold ph-magnifying-glass"></i>
+            <input type="text" id="kas-search" placeholder="Cari keterangan…" />
+          </div>
+
+          <div style="display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;">
+            <button class="btn-export excel" id="btn-export-kas">
+              <i class="ph-bold ph-file-csv"></i> Export CSV
+            </button>
+            <button class="btn btn-outline btn-sm" id="btn-catat-pengeluaran2">
+              <i class="ph-bold ph-arrow-up-right"></i> Pengeluaran
+            </button>
+            <button class="btn btn-primary btn-sm" id="btn-catat-pemasukan2">
+              <i class="ph-bold ph-arrow-down-left"></i> Pemasukan
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Jenis</th>
+                  <th>Kategori</th>
+                  <th>Keterangan</th>
+                  <th style="text-align:right;">Nominal</th>
+                  <th style="text-align:right;">Saldo</th>
+                  <th style="text-align:center;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-kas">
+                <tr><td colspan="7" style="text-align:center;padding:32px;color:var(--clr-text-muted);">Memuat data transaksi...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <p class="pagination-info" id="kas-pagination-info">—</p>
+            <div class="pagination-pages" id="kas-pager"></div>
+          </div>
+        </div>
+
+      </div><div id="keu-panel-spp" class="keu-panel" style="display:none;">
+        
+        <div class="filter-bar" style="margin-bottom:16px;">
+          <div class="filter-group">
+            <label>Bulan:</label>
+            <input type="month" id="spp-filter-bulan" />
+          </div>
+          <div class="filter-group">
+            <label>Kelas:</label>
+            <select id="spp-filter-kelas">
+              <option value="">Semua Kelas</option>
+              <option value="1">Kelas 1</option>
+              <option value="2">Kelas 2</option>
+              <option value="3">Kelas 3</option>
+              <option value="4">Kelas 4</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Status:</label>
+            <select id="spp-filter-status">
+              <option value="">Semua</option>
+              <option value="Belum">Belum Bayar</option>
+              <option value="Lunas">Lunas</option>
+              <option value="Cicil">Cicilan</option>
+            </select>
+          </div>
+          <div class="toolbar-search" style="max-width:220px;">
+            <i class="ph-bold ph-magnifying-glass"></i>
+            <input type="text" id="spp-search" placeholder="Cari nama / NIS…" />
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-generate-spp" style="margin-left:auto;">
+            <i class="ph-bold ph-magic-wand"></i> Generate Tagihan
+          </button>
+        </div>
+
+        <div id="spp-stat-cards"></div>
+
+        <div class="card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:36px;text-align:center;">#</th>
+                  <th>Nama Santri</th>
+                  <th>Kelas</th>
+                  <th>Nominal</th>
+                  <th>Status</th>
+                  <th>Tgl Bayar</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-spp">
+                 <tr><td colspan="7" style="text-align:center;padding:32px;color:var(--clr-text-muted);">Memuat tagihan SPP...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><div id="keu-panel-laporan" class="keu-panel" style="display:none;">
+        <div class="filter-bar" style="margin-bottom:20px;">
+          <div class="filter-group">
+            <label>Pilih Bulan Laporan:</label>
+            <input type="month" id="laporan-bulan" />
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-tampil-laporan" style="margin-left:8px;">
+            <i class="ph-bold ph-magnifying-glass"></i> Tampilkan
+          </button>
+        </div>
+
+        <div id="laporan-wrap">
+          <div class="empty-state" style="padding:56px 24px;">
+            <div class="empty-state-icon">
+              <i class="ph-bold ph-chart-bar"></i>
+            </div>
+            <p class="empty-state-title">Laporan Keuangan</p>
+            <p class="empty-state-msg">
+              Pilih bulan dan klik "Tampilkan" untuk melihat laporan lengkap beserta grafik tren.
+            </p>
+          </div>
+        </div>
+      </div><div class="modal-overlay" id="modal-kas">
+        <div class="modal-dialog" style="max-width:480px;">
+          <div class="modal-header">
+            <div class="modal-header-icon" style="background:rgba(34,197,94,.1);">
+              <i class="ph-bold ph-arrow-down-left" style="color:var(--clr-success);"></i>
+            </div>
+            <h3 class="modal-title" id="modal-kas-title">Catat Pemasukan</h3>
+            <button class="modal-close" data-close-modal="modal-kas">
+              <i class="ph-bold ph-x"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="form-kas" autocomplete="off">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="kas-tanggal">
+                    Tanggal <span style="color:var(--clr-danger);">*</span>
+                  </label>
+                  <input type="date" id="kas-tanggal" class="form-control" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="kas-jenis">
+                    Jenis <span style="color:var(--clr-danger);">*</span>
+                  </label>
+                  <select id="kas-jenis" class="form-control">
+                    <option value="masuk">Pemasukan</option>
+                    <option value="keluar">Pengeluaran</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="kas-kategori">
+                  Kategori <span style="color:var(--clr-danger);">*</span>
+                </label>
+                <select id="kas-kategori" class="form-control">
+                  <option value="">— Pilih Kategori —</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="kas-keterangan">
+                  Keterangan <span style="color:var(--clr-danger);">*</span>
+                </label>
+                <input type="text" id="kas-keterangan" class="form-control" placeholder="Deskripsi singkat transaksi" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="kas-nominal">
+                  Nominal (Rp) <span style="color:var(--clr-danger);">*</span>
+                </label>
+                <input type="number" id="kas-nominal" class="form-control" placeholder="Contoh: 150000" min="1" />
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline" data-close-modal="modal-kas">
+              <i class="ph-bold ph-x"></i> Batal
+            </button>
+            <button class="btn btn-primary" id="btn-simpan-kas">
+              <i class="ph-bold ph-floppy-disk"></i>
+              <span id="btn-simpan-kas-label">Simpan</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section><!-- #view-kas-madrasah -->
+
+    <!-- VIEW: TUNGGAKAN -->
+
+    <!-- VIEW: LAPORAN KEUANGAN -->
+
+    <!-- ══════════════════════════════════════════════════════
+         SECTION: USTADZ & PENGURUS
+    ══════════════════════════════════════════════════════════ -->
+
+    <!-- VIEW: DATA USTADZ -->
+
+    <!-- VIEW: JADWAL MENGAJAR -->
+
+    <!-- VIEW: HONOR USTADZ -->
+
+    <!-- VIEW: KEHADIRAN USTADZ -->
+
+    <!-- VIEW: STRUKTUR PENGURUS -->
+
+    <!-- VIEW: SOP MADRASAH -->
+
+    <!-- ══════════════════════════════════════════════════════
+         SECTION: AGENDA & KEGIATAN
+    ══════════════════════════════════════════════════════════ -->
+
+    <!-- VIEW: PENGAJIAN -->
+
+    <!-- VIEW: IMTIHAN -->
+
+    <!-- VIEW: WISUDA -->
+
+    <!-- VIEW: PHBI -->
+
+    <!-- VIEW: RAPAT WALI -->
+
+    <!-- VIEW: KEGIATAN SANTRI -->
+
+    <!-- ══════════════════════════════════════════════════════
+         SECTION: ADMINISTRASI
+    ══════════════════════════════════════════════════════════ -->
+
+    <!-- VIEW: SURAT & ADMINISTRASI -->
+
+    <!-- VIEW: INVENTARIS -->
+
+    <!-- VIEW: PENGUMUMAN -->
+
+    <!-- VIEW: PENGATURAN -->
+
+    <!-- ══════════════════════════════════════════════════════
+         VIEW: PLACEHOLDER (halaman belum dibangun)
+         Salin blok ini dan ganti id + judul untuk
+         halaman-halaman lain yang belum ada kontennya.
+    ══════════════════════════════════════════════════════════ -->
+
+    <!-- PLACEHOLDER DATA SANTRI -->
+
+    <!-- PLACEHOLDER ABSENSI -->
+
+    <section id="view-absensi-ustadz" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Absensi Ustadz</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Pencatatan kehadiran ustadz dan tenaga pengajar.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-clipboard-text"></i>
+          </div>
+          <p class="empty-state-title">Absensi Ustadz</p>
+          <p class="empty-state-msg">
+            Pencatatan kehadiran ustadz dan tenaga pengajar sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-izin-sakit" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Izin / Sakit / Alpha</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Manajemen catatan ketidakhadiran santri beserta alasannya.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-first-aid-kit"></i>
+          </div>
+          <p class="empty-state-title">Izin / Sakit / Alpha</p>
+          <p class="empty-state-msg">
+            Manajemen catatan ketidakhadiran santri beserta alasannya sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLACEHOLDER AKADEMIK -->
+
+    <section id="view-kurikulum" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Kurikulum</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Penyusunan dan manajemen kurikulum awwaliyah, wustho dan ulya madrasah.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph ph-book-open"></i>
+          </div>
+          <p class="empty-state-title">Kurikulum</p>
+          <p class="empty-state-msg">
+            Penyusunan dan manajemen kurikulum awwaliyah, wustho dan ulya madrasah sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-jadwal-mengajar" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Jadwal Mengajar</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Penyusunan dan manajemen jadwal mengajar madrasah.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-calendar-check"></i>
+          </div>
+          <p class="empty-state-title">Jadwal Mengajar</p>
+          <p class="empty-state-msg">
+            Penyusunan dan manajemen jadwal mengajar madrasah sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-mata-pelajaran" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Mata Pelajaran</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Penyusunan dan manajemen jadwal pelajaran madrasah.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-book-open"></i>
+          </div>
+          <p class="empty-state-title">Mata Pelajaran</p>
+          <p class="empty-state-msg">
+            Daftar mata pelajaran / kitab yang diajarkan di madrasah sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-ujian" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Ujian / Imtihan</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Jadwal dan rekap pelaksanaan ujian madrasah.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-medal"></i>
+          </div>
+          <p class="empty-state-title">Ujian / Imtihan</p>
+          <p class="empty-state-msg">
+            Jadwal dan rekap pelaksanaan ujian madrasah sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-raport" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Raport</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Generate dan cetak raport semester santri.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-file-doc"></i>
+          </div>
+          <p class="empty-state-title">Raport</p>
+          <p class="empty-state-msg">
+            Generate dan cetak raport semester santri sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-kenaikan-tingkat" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Kenaikan Tingkat</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Proses keputusan naik/tidak naik tingkat santri.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-trend-up"></i>
+          </div>
+          <p class="empty-state-title">Kenaikan Tingkat</p>
+          <p class="empty-state-msg">
+            Proses keputusan naik/tidak naik tingkat santri sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLACEHOLDER KEUANGAN -->
+
+    <section id="view-syahriah-spp" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Syahriah / SPP</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Pencatatan pembayaran iuran bulanan santri.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-receipt"></i>
+          </div>
+          <p class="empty-state-title">Syahriah / SPP</p>
+          <p class="empty-state-msg">
+            Pencatatan pembayaran iuran bulanan santri sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-infaq-donasi" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Infaq & Donasi</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Rekap penerimaan infaq, sedekah, dan donasi madrasah.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-hand-heart"></i>
+          </div>
+          <p class="empty-state-title">Infaq & Donasi</p>
+          <p class="empty-state-msg">
+            Rekap penerimaan infaq, sedekah, dan donasi madrasah sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-pengeluaran" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Pengeluaran</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Rekap penerimaan infaq, sedekah, dan donasi madrasah.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-arrow-up-right"></i>
+          </div>
+          <p class="empty-state-title">Pengeluaran</p>
+          <p class="empty-state-msg">
+            Pencatatan seluruh pengeluaran operasional madrasah sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-tunggakan" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Tunggakan Santri</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Daftar santri yang memiliki tunggakan pembayaran syahriah.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-warning-circle"></i>
+          </div>
+          <p class="empty-state-title">Tunggakan Santri</p>
+          <p class="empty-state-msg">
+            Daftar santri yang memiliki tunggakan pembayaran syahriah sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-laporan-keuangan" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Laporan Keuangan</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Generate laporan keuangan bulanan dan tahunan madrasah.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-chart-line"></i>
+          </div>
+          <p class="empty-state-title">Laporan Keuangan</p>
+          <p class="empty-state-msg">
+            Generate laporan keuangan bulanan dan tahunan madrasah sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLACEHOLDER USTADZ & PENGURUS -->
+
+    <section id="view-data-ustadz" class="page-view">
+      
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Ustadz & Kepengurusan</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Manajemen data asatidzah, jadwal mengajar, dan rekapitulasi honor bulanan.
+          </p>
+        </div>
+        <div class="page-header-actions">
+          <button class="btn-export excel" id="btn-export-ust">
+            <i class="ph-bold ph-file-csv"></i> Export CSV
+          </button>
+          <button class="btn btn-primary btn-sm" id="btn-tambah-ust">
+            <i class="ph-bold ph-user-plus"></i> Tambah Ustadz
+          </button>
+        </div>
+      </div>
+
+      <div id="ust-stat-cards" style="margin-bottom: 20px;"></div>
+
+      <div class="page-tabs" id="ust-tabs">
+        <div class="page-tab active" data-ust-tab="daftar">
+          <i class="ph-bold ph-users" style="font-size:14px;margin-right:5px;"></i>
+          Daftar Ustadz
+        </div>
+        <div class="page-tab" data-ust-tab="jadwal">
+          <i class="ph-bold ph-calendar-blank" style="font-size:14px;margin-right:5px;"></i>
+          Jadwal Mengajar
+        </div>
+        <div class="page-tab" data-ust-tab="honor">
+          <i class="ph-bold ph-coins" style="font-size:14px;margin-right:5px;"></i>
+          Honor Bulanan
+        </div>
+      </div>
+
+      <div id="ust-panel-daftar" class="ust-panel">
+        <div class="table-toolbar">
+          <div class="toolbar-search">
+            <i class="ph-bold ph-magnifying-glass"></i>
+            <input type="text" id="ust-search" placeholder="Cari nama, HP, atau alamat…" />
+          </div>
+          <div class="toolbar-filter">
+            <select id="ust-filter-jabatan">
+              <option value="">Semua Jabatan</option>
+              <option value="Kepala Madrasah">Kepala Madrasah</option>
+              <option value="Wakil Kepala">Wakil Kepala</option>
+              <option value="Ustadz / Guru">Ustadz / Guru</option>
+              <option value="Bendahara">Bendahara</option>
+              <option value="Sekretaris">Sekretaris</option>
+              <option value="Wali Kelas">Wali Kelas</option>
+            </select>
+          </div>
+          <div class="toolbar-filter">
+            <select id="ust-filter-status">
+              <option value="">Semua Status</option>
+              <option value="Aktif">Aktif</option>
+              <option value="Cuti">Cuti</option>
+              <option value="Non-Aktif">Non-Aktif</option>
+            </select>
+          </div>
+          <span id="ust-pagination-info" style="font-size:13px;color:var(--clr-text-muted);margin-left:auto;">—</span>
+        </div>
+
+        <div class="card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:40px; text-align:center;">#</th>
+                  <th>Nama Lengkap</th>
+                  <th>Jabatan Utama</th>
+                  <th>Kontak & Surel</th>
+                  <th>Status</th>
+                  <th style="text-align:center; width:140px;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-ustadz">
+                <tr><td colspan="6" style="text-align:center;padding:32px;color:var(--clr-text-muted);">Memuat data asatidzah...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <p class="pagination-info" id="ust-pagination-info-bottom">—</p>
+            <div class="pagination-pages" id="ust-pager"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="ust-panel-jadwal" class="ust-panel" style="display:none;">
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label>Hari:</label>
+            <select id="jadwal-filter-hari">
+              <option value="">Semua Hari</option>
+              <option value="Senin">Senin</option>
+              <option value="Selasa">Selasa</option>
+              <option value="Rabu">Rabu</option>
+              <option value="Kamis">Kamis</option>
+              <option value="Jumat">Jumat</option>
+              <option value="Sabtu">Sabtu</option>
+              <option value="Ahad">Ahad</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Kelas:</label>
+            <select id="jadwal-filter-kelas">
+              <option value="">Semua Kelas</option>
+              <option value="1">Kelas 1 (Awwaliyah)</option>
+              <option value="2">Kelas 2 (Awwaliyah)</option>
+              <option value="3">Kelas 3 (Awwaliyah)</option>
+              <option value="4">Kelas 4 (Awwaliyah)</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-tambah-jadwal" style="margin-left:auto;">
+            <i class="ph-bold ph-calendar-plus"></i> Atur Jadwal Baru
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Hari</th>
+                  <th>Jam Ke</th>
+                  <th>Kelas</th>
+                  <th>Mata Pelajaran / Kitab</th>
+                  <th>Ustadz Pengajar</th>
+                  <th style="text-align:center; width:100px;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-jadwal">
+                <tr><td colspan="6" style="text-align:center;padding:32px;color:var(--clr-text-muted);">Pilih parameter filter untuk menampilkan jadwal.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="ust-panel-honor" class="ust-panel" style="display:none;">
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label>Bulan Rekap:</label>
+            <input type="month" id="honor-filter-bulan" />
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-generate-honor" style="margin-left:auto;">
+            <i class="ph-bold ph-magic-wand"></i> Kalkulasi Honor Bulanan
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:40px; text-align:center;">#</th>
+                  <th>Nama Lengkap</th>
+                  <th>Jabatan</th>
+                  <th style="text-align:center;">Kehadiran / Tatap Muka</th>
+                  <th style="text-align:right;">Total Honor</th>
+                  <th>Status Transfer</th>
+                  <th style="text-align:center; width:120px;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-honor">
+                <tr><td colspan="7" style="text-align:center;padding:32px;color:var(--clr-text-muted);">Silakan tentukan bulan transaksi.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-overlay" id="modal-ust-form">
+        <div class="modal-dialog" style="max-width:560px;">
+          <div class="modal-header">
+            <div class="modal-header-icon"><i class="ph-bold ph-user-gear"></i></div>
+            <h3 class="modal-title" id="modal-ust-title">Form Data Profil Ustadz</h3>
+            <button class="modal-close" data-close-modal="modal-ust-form"><i class="ph-bold ph-x"></i></button>
+          </div>
+          <div class="modal-body">
+            <form id="form-ust" autocomplete="off">
+              <input type="hidden" id="ust-edit-id" />
+              
+              <div class="form-group">
+                <label class="form-label" for="ust-nama">Nama Lengkap + Gelar <span style="color:var(--clr-danger);">*</span></label>
+                <input type="text" id="ust-nama" class="form-control" placeholder="Contoh: Ust. Ahmad Fauzi, S.Pd.I" required />
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="ust-jabatan">Jabatan Utama <span style="color:var(--clr-danger);">*</span></label>
+                  <select id="ust-jabatan" class="form-control" required>
+                    <option value="">— Pilih Jabatan —</option>
+                    <option value="Kepala Madrasah">Kepala Madrasah</option>
+                    <option value="Wakil Kepala">Wakil Kepala</option>
+                    <option value="Ustadz / Guru">Ustadz / Guru</option>
+                    <option value="Bendahara">Bendahara</option>
+                    <option value="Sekretaris">Sekretaris</option>
+                    <option value="Wali Kelas">Wali Kelas</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="ust-status">Status Aktivitas</label>
+                  <select id="ust-status" class="form-control">
+                    <option value="Aktif">Aktif</option>
+                    <option value="Cuti">Cuti</option>
+                    <option value="Non-Aktif">Non-Aktif</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="ust-hp">Nomor WhatsApp / HP <span style="color:var(--clr-danger);">*</span></label>
+                  <input type="tel" id="ust-hp" class="form-control" placeholder="08xxxxxxxxxx" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="ust-email">Alamat Surel (Email)</label>
+                  <input type="email" id="ust-email" class="form-control" placeholder="ustadz@domain.com" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="ust-alamat">Alamat Domisili Tampat Tinggal</label>
+                <textarea id="ust-alamat" class="form-control" rows="2" placeholder="Tulis alamat rumah lengkap…"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline" data-close-modal="modal-ust-form"><i class="ph-bold ph-x"></i> Batal</button>
+            <button class="btn btn-primary" id="btn-simpan-ust"><i class="ph-bold ph-floppy-disk"></i> Simpan Data</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-overlay" id="modal-ust-detail">
+        <div class="modal-dialog" style="max-width:460px;">
+          <div class="modal-header">
+            <div class="modal-header-icon"><i class="ph-bold ph-identification-card"></i></div>
+            <h3 class="modal-title">Biodata Lengkap Pengajar</h3>
+            <button class="modal-close" data-close-modal="modal-ust-detail"><i class="ph-bold ph-x"></i></button>
+          </div>
+          <div class="modal-body" id="ust-detail-body">
+            </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline" data-close-modal="modal-ust-detail"><i class="ph-bold ph-x"></i> Tutup</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-overlay" id="modal-jadwal">
+        <div class="modal-dialog" style="max-width:480px;">
+          <div class="modal-header">
+            <div class="modal-header-icon"><i class="ph-bold ph-calendar-plus"></i></div>
+            <h3 class="modal-title" id="modal-jadwal-title">Konfigurasi Jadwal Rutin</h3>
+            <button class="modal-close" data-close-modal="modal-jadwal"><i class="ph-bold ph-x"></i></button>
+          </div>
+          <div class="modal-body">
+            <form id="form-jadwal" autocomplete="off">
+              <input type="hidden" id="jadwal-edit-id" />
+              
+              <div class="form-group">
+                <label class="form-label" for="jwl-ustadz">Ustadz Pengajar <span style="color:var(--clr-danger);">*</span></label>
+                <select id="jwl-ustadz" class="form-control" required>
+                  <option value="">— Pilih Ustadz Pengajar —</option>
+                </select>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="jwl-hari">Hari <span style="color:var(--clr-danger);">*</span></label>
+                  <select id="jwl-hari" class="form-control" required>
+                    <option value="Senin">Senin</option>
+                    <option value="Selasa">Selasa</option>
+                    <option value="Rabu">Rabu</option>
+                    <option value="Kamis">Kamis</option>
+                    <option value="Jumat">Jumat</option>
+                    <option value="Sabtu">Sabtu</option>
+                    <option value="Ahad">Ahad</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="jwl-jam">Jam Pertemuan Pertemuan Ke- <span style="color:var(--clr-danger);">*</span></label>
+                  <input type="number" id="jwl-jam" class="form-control" min="1" max="10" placeholder="Contoh: 1" required />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="jwl-kelas">Kelas Madrasah <span style="color:var(--clr-danger);">*</span></label>
+                  <select id="jwl-kelas" class="form-control" required>
+                    <option value="">— Pilih Kelas —</option>
+                    <option value="1">Kelas 1 (Awwaliyah)</option>
+                    <option value="2">Kelas 2 (Awwaliyah)</option>
+                    <option value="3">Kelas 3 (Awwaliyah)</option>
+                    <option value="4">Kelas 4 (Awwaliyah)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="jwl-mapel">Mata Pelajaran / Kitab <span style="color:var(--clr-danger);">*</span></label>
+                  <select id="jwl-mapel" class="form-control" required>
+                    <option value="">— Pilih Materi Pelajaran —</option>
+                    <option value="Al-Qur'an / Tahfidz">Al-Qur'an / Tahfidz</option>
+                    <option value="Tajwid">Tajwid</option>
+                    <option value="Fiqih">Fiqih</option>
+                    <option value="Aqidah">Aqidah</option>
+                    <option value="Akhlak">Akhlak</option>
+                    <option value="Hadits">Hadits</option>
+                    <option value="Tafsir">Tafsir</option>
+                    <option value="Nahwu">Nahwu</option>
+                    <option value="Sharaf">Sharaf</option>
+                    <option value="Bahasa Arab">Bahasa Arab</option>
+                    <option value="Sejarah Islam">Sejarah Islam</option>
+                    <option value="Imla'">Imla'</option>
+                  </select>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline" data-close-modal="modal-jadwal"><i class="ph-bold ph-x"></i> Batal</button>
+            <button class="btn btn-primary" id="btn-simpan-jadwal"><i class="ph-bold ph-floppy-disk"></i> Simpan Jadwal</button>
+          </div>
+        </div>
+      </div>
+
+    </section><!-- #view-data-ustadz -->
+
+    <section id="view-jadwal-mengajar-ustadz" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Jadwal Mengajar</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Manajemen jadwal mengajar setiap ustadz per kelas.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-calendar-check"></i>
+          </div>
+          <p class="empty-state-title">Jadwal Mengajar</p>
+          <p class="empty-state-msg">
+            Manajemen jadwal mengajar setiap ustadz per kelas sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-honor-ustadz" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Honor Ustadz</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Pencatatan dan distribusi honor ustadz setiap bulan.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-money"></i>
+          </div>
+          <p class="empty-state-title">Honor Ustadz</p>
+          <p class="empty-state-msg">
+            Pencatatan dan distribusi honor ustadz setiap bulan sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-kehadiran-ustadz" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Kehadiran Ustadz</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Rekap kehadiran seluruh ustadz madrasah.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-clipboard-text"></i>
+          </div>
+          <p class="empty-state-title">Kehadiran Ustadz</p>
+          <p class="empty-state-msg">
+            Rekap kehadiran seluruh ustadz madrasah sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-struktur-pengurus" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Struktur Pengurus</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Bagan organisasi kepengurusan madrasah diniyah.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-tree-structure"></i>
+          </div>
+          <p class="empty-state-title">Struktur Pengurus</p>
+          <p class="empty-state-msg">
+            Bagan organisasi kepengurusan madrasah diniyah sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-sop-madrasah" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">SOP Madrasah</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            SOP 6 Bidang madrasah diniyah.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph ph-arrow-fat-lines-right"></i>
+          </div>
+          <p class="empty-state-title">SOP Madrasah</p>
+          <p class="empty-state-msg">
+            SOP 6 Bidang madrasah diniyah sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLACEHOLDER AGENDA & KEGIATAN -->
+
+    <section id="view-pengajian" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Pengajian</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Jadwal dan dokumentasi kegiatan pengajian madrasah.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-star-of-david"></i>
+          </div>
+          <p class="empty-state-title">Pengajian</p>
+          <p class="empty-state-msg">
+            Jadwal dan dokumentasi kegiatan pengajian madrasah sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-imtihan" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Imtihan</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Halaman khusus manajemen imtihan / ujian akhir.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-scroll"></i>
+          </div>
+          <p class="empty-state-title">Imtihan</p>
+          <p class="empty-state-msg">
+            Halaman khusus manajemen imtihan / ujian akhir sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-wisuda" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Wisuda</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Halaman khusus manajemen imtihan / ujian akhir.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-graduation-cap"></i>
+          </div>
+          <p class="empty-state-title">Wisuda</p>
+          <p class="empty-state-msg">
+            Manajemen acara wisuda / khotmil Qur'an santri sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-phbi" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">PHBI</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Peringatan Hari Besar Islam dan kegiatan keagamaan.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-moon-stars"></i>
+          </div>
+          <p class="empty-state-title">PHBI</p>
+          <p class="empty-state-msg">
+            Peringatan Hari Besar Islam dan kegiatan keagamaan sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-rapat-wali" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Rapat Wali Santri</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Dokumentasi dan agenda rapat bersama wali santri.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-users-three"></i>
+          </div>
+          <p class="empty-state-title">Rapat Wali Santri</p>
+          <p class="empty-state-msg">
+            Dokumentasi dan agenda rapat bersama wali santri sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-kegiatan-santri" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Kegiatan Santri</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Ekstrakulikuler dan kegiatan santri di luar kurikulum.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-soccer-ball"></i>
+          </div>
+          <p class="empty-state-title">Kegiatan Santri</p>
+          <p class="empty-state-msg">
+            Ekstrakulikuler dan kegiatan santri di luar kurikulum sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLACEHOLDER ADMINISTRASI -->
+
+    <section id="view-surat-administrasi" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Surat & Administrasi</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Template surat resmi dan manajemen administrasi madrasah.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-file-text"></i>
+          </div>
+          <p class="empty-state-title">Surat & Administrasi</p>
+          <p class="empty-state-msg">
+            Template surat resmi dan manajemen administrasi madrasah sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-inventaris" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Inventaris</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Daftar barang inventaris dan aset madrasah diniyah.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-package"></i>
+          </div>
+          <p class="empty-state-title">Inventaris</p>
+          <p class="empty-state-msg">
+            Daftar barang inventaris dan aset madrasah diniyah sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-pengumuman" class="page-view">
+      
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">
+            Pengumuman Madrasah
+          </h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Kelola dan publikasikan pengumuman kepada santri & wali.
+          </p>
+        </div>
+        <div class="page-header-actions">
+          <button class="btn-export excel" id="btn-export-pgm">
+            <i class="ph-bold ph-file-csv"></i> Export CSV
+          </button>
+          <button class="btn btn-primary btn-sm" id="btn-buat-pgm">
+            <i class="ph-bold ph-plus"></i> Buat Pengumuman
+          </button>
+        </div>
+      </div>
+
+      <div id="pgm-stat-cards"></div>
+
+      <div class="page-tabs" style="margin-bottom:16px;">
+        <div class="page-tab active" data-pgm-tab="tayang">
+          <i class="ph-bold ph-broadcast" style="font-size:13px;margin-right:5px;"></i> Tayang
+        </div>
+        <div class="page-tab" data-pgm-tab="draft">
+          <i class="ph-bold ph-pencil-simple" style="font-size:13px;margin-right:5px;"></i> Draft
+        </div>
+        <div class="page-tab" data-pgm-tab="arsip">
+          <i class="ph-bold ph-archive" style="font-size:13px;margin-right:5px;"></i> Arsip
+        </div>
+        <div class="page-tab" data-pgm-tab="">
+          <i class="ph-bold ph-list" style="font-size:13px;margin-right:5px;"></i> Semua
+        </div>
+      </div>
+
+      <div class="table-toolbar" style="margin-bottom:14px;">
+        <div class="toolbar-search">
+          <i class="ph-bold ph-magnifying-glass"></i>
+          <input type="text" id="pgm-search" placeholder="Cari judul atau isi…" />
+        </div>
+
+        <div class="toolbar-filter">
+          <select id="pgm-filter-kat">
+            <option value="">Semua Kategori</option>
+            <option value="umum">Umum</option>
+            <option value="akademik">Akademik</option>
+            <option value="keuangan">Keuangan</option>
+            <option value="kegiatan">Kegiatan</option>
+            <option value="darurat">Darurat</option>
+            <option value="libur">Libur</option>
+          </select>
+        </div>
+
+        <div class="toolbar-filter">
+          <select id="pgm-filter-prio">
+            <option value="">Semua Prioritas</option>
+            <option value="normal">Normal</option>
+            <option value="penting">Penting</option>
+            <option value="mendesak">Mendesak</option>
+          </select>
+        </div>
+
+        <span id="pgm-pagination-info" style="font-size:13px;color:var(--clr-text-muted);margin-left:auto;">—</span>
+      </div>
+
+      <div class="card">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:44px;"></th>
+                <th>Judul & Ringkasan</th>
+                <th>Kategori</th>
+                <th>Prioritas</th>
+                <th>Status</th>
+                <th>Tanggal & Penulis</th>
+                <th style="text-align:center;width:140px;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-pgm">
+              <tr><td colspan="7" style="text-align:center;padding:32px;color:var(--clr-text-muted);">Memuat pengumuman...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <p class="pagination-info" id="pgm-pagination-info-bottom">—</p>
+          <div class="pagination-pages" id="pgm-pager"></div>
+        </div>
+      </div>
+
+      <div class="modal-overlay" id="modal-pgm-form">
+        <div class="modal-dialog" style="max-width:580px;">
+          <div class="modal-header">
+            <div class="modal-header-icon">
+              <i class="ph-bold ph-megaphone"></i>
+            </div>
+            <h3 class="modal-title" id="modal-pgm-title">Buat Pengumuman Baru</h3>
+            <button class="modal-close" data-close-modal="modal-pgm-form">
+              <i class="ph-bold ph-x"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="form-pgm" autocomplete="off">
+              <div class="form-group">
+                <label class="form-label" for="pgm-judul">
+                  Judul <span style="color:var(--clr-danger);">*</span>
+                </label>
+                <input type="text" id="pgm-judul" class="form-control" placeholder="Judul pengumuman yang jelas dan singkat" maxlength="120" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="pgm-isi">
+                  Isi Pengumuman <span style="color:var(--clr-danger);">*</span>
+                </label>
+                <textarea id="pgm-isi" class="form-control" rows="6" placeholder="Tuliskan isi pengumuman secara lengkap dan jelas…"></textarea>
+                <p style="font-size:11.5px;color:var(--clr-text-muted);margin-top:4px;">
+                  <i class="ph-bold ph-info" style="font-size:12px;"></i> Gunakan Enter untuk memisahkan paragraf.
+                </p>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="pgm-kategori">
+                    Kategori <span style="color:var(--clr-danger);">*</span>
+                  </label>
+                  <select id="pgm-kategori" class="form-control">
+                    <option value="">— Pilih Kategori —</option>
+                    <option value="umum">Umum</option>
+                    <option value="akademik">Akademik</option>
+                    <option value="keuangan">Keuangan</option>
+                    <option value="kegiatan">Kegiatan</option>
+                    <option value="darurat">Darurat</option>
+                    <option value="libur">Libur</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="pgm-prioritas">Prioritas</label>
+                  <select id="pgm-prioritas" class="form-control">
+                    <option value="normal">Normal</option>
+                    <option value="penting">Penting</option>
+                    <option value="mendesak">Mendesak</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="pgm-status">Status Publikasi</label>
+                  <select id="pgm-status" class="form-control">
+                    <option value="draft">Draft</option>
+                    <option value="tayang">Tayang Sekarang</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="pgm-tgl-tayang">Tanggal Tayang</label>
+                  <input type="date" id="pgm-tgl-tayang" class="form-control" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="pgm-tgl-kadaluarsa">
+                  Tanggal Kadaluarsa <span style="color:var(--clr-text-muted);font-weight:400;">(opsional)</span>
+                </label>
+                <input type="date" id="pgm-tgl-kadaluarsa" class="form-control" />
+                <p style="font-size:11.5px;color:var(--clr-text-muted);margin-top:4px;">
+                  Kosongkan jika pengumuman tidak memiliki batas waktu.
+                </p>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline" data-close-modal="modal-pgm-form">
+              <i class="ph-bold ph-x"></i> Batal
+            </button>
+            <button class="btn btn-outline" id="btn-simpan-draft" style="color:var(--clr-warning);border-color:var(--clr-warning);">
+              <i class="ph-bold ph-pencil-simple"></i> Simpan Draft
+            </button>
+            <button class="btn btn-primary" id="btn-simpan-pgm">
+              <i class="ph-bold ph-broadcast"></i> <span id="btn-simpan-pgm-label">Simpan</span>
+            </button>
+          </div>
+        </div>
+      </div><div class="modal-overlay" id="modal-pgm-preview">
+        <div class="modal-dialog" style="max-width:600px;">
+          <div class="modal-header">
+            <div class="modal-header-icon">
+              <i class="ph-bold ph-eye"></i>
+            </div>
+            <h3 class="modal-title">Preview Pengumuman</h3>
+            <button class="modal-close" data-close-modal="modal-pgm-preview">
+              <i class="ph-bold ph-x"></i>
+            </button>
+          </div>
+          <div class="modal-body" id="pgm-preview-body">
+            </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline" data-close-modal="modal-pgm-preview">
+              <i class="ph-bold ph-x"></i> Tutup
+            </button>
+            <button class="btn btn-primary" id="btn-print-pgm">
+              <i class="ph-bold ph-printer"></i> Cetak
+            </button>
+          </div>
+        </div>
+      </div>
+    </section><!-- #view-pengumuman -->
+
+    <section id="view-pengaturan" class="page-view">
+      <div class="page-header-row">
+        <div>
+          <h2 class="section-title" style="font-size:18px;">Pengaturan</h2>
+          <p style="font-size:13px;color:var(--clr-text-muted);margin-top:3px;">
+            Konfigurasi sistem, profil lembaga, dan manajemen pengguna.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="ph-bold ph-gear"></i>
+          </div>
+          <p class="empty-state-title">Pengaturan</p>
+          <p class="empty-state-msg">
+            Konfigurasi sistem, profil lembaga, dan manajemen pengguna sedang disiapkan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- #main-content -->
+  
+<!-- ═══════════════════════════════════════════════════════════
+       TOAST CONTAINER
+  ═══════════════════════════════════════════════════════════════ -->
+  <div id="toast-container"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       MODAL: KONFIRMASI HAPUS (dipakai global oleh confirmDelete())
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modal-confirm">
+    <div class="modal-dialog confirm">
+      <div class="modal-body" style="padding:32px 28px 24px;">
+        <div class="modal-confirm-icon">
+          <i class="ph-bold ph-trash"></i>
+        </div>
+        <p class="modal-confirm-title">Hapus Data?</p>
+        <p class="modal-confirm-msg" id="modal-confirm-msg">
+          Data yang dihapus tidak dapat dipulihkan.
+        </p>
+      </div>
+      <div class="modal-footer" style="justify-content:center;gap:12px;">
+        <button class="btn btn-outline" id="modal-confirm-cancel">
+          <i class="ph-bold ph-x"></i> Batal
+        </button>
+        <button class="btn btn-danger" id="modal-confirm-ok">
+          <i class="ph-bold ph-trash"></i> Ya, Hapus
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       MODAL: TAMBAH / EDIT SANTRI
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modal-santri">
+    <div class="modal-dialog" style="max-width:640px;">
+
+      <div class="modal-header">
+        <div class="modal-header-icon">
+          <i class="ph-bold ph-student"></i>
+        </div>
+        <h3 class="modal-title" id="modal-santri-title">Tambah Data Santri</h3>
+        <button class="modal-close" data-close-modal="modal-santri">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form id="form-santri" autocomplete="off">
+          <!-- ID tersembunyi untuk mode edit -->
+          <input type="hidden" id="santri-edit-id" />
+
+          <!-- ── DATA PRIBADI ─────────────────────────────── -->
+          <p class="modal-section-label">Data Pribadi</p>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="santri-nama">
+                Nama Lengkap <span style="color:var(--clr-danger);">*</span>
+              </label>
+              <input type="text" id="santri-nama" class="form-control"
+                     placeholder="Nama lengkap santri" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="santri-nis">
+                NIS <span style="color:var(--clr-danger);">*</span>
+              </label>
+              <input type="text" id="santri-nis" class="form-control"
+                     placeholder="6–10 digit angka" maxlength="10" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="santri-ttl-tempat">Tempat Lahir</label>
+              <input type="text" id="santri-ttl-tempat" class="form-control"
+                     placeholder="Kota/Kabupaten" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="santri-ttl-tgl">Tanggal Lahir</label>
+              <input type="date" id="santri-ttl-tgl" class="form-control" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Jenis Kelamin</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="santri-jk" value="L" checked />
+                <span>Laki-laki</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="santri-jk" value="P" />
+                <span>Perempuan</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="santri-alamat">Alamat</label>
+            <textarea id="santri-alamat" class="form-control" rows="2"
+                      placeholder="Alamat lengkap santri"></textarea>
+          </div>
+
+          <!-- ── DATA AKADEMIK ───────────────────────────── -->
+          <p class="modal-section-label" style="margin-top:8px;">Data Akademik</p>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="santri-kelas">
+                Kelas <span style="color:var(--clr-danger);">*</span>
+              </label>
+              <select id="santri-kelas" class="form-control">
+                <option value="">— Pilih Kelas —</option>
+                <option value="1">Kelas 1 (Awwaliyah)</option>
+                <option value="2">Kelas 2 (Awwaliyah)</option>
+                <option value="3">Kelas 3 (Awwaliyah)</option>
+                <option value="4">Kelas 4 (Awwaliyah)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="santri-status">Status</label>
+              <select id="santri-status" class="form-control">
+                <option value="Aktif">Aktif</option>
+                <option value="Cuti">Cuti</option>
+                <option value="Lulus">Lulus</option>
+                <option value="Non-Aktif">Non-Aktif</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="santri-tgl-masuk">Tanggal Masuk</label>
+              <input type="date" id="santri-tgl-masuk" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="santri-nisn">NISN</label>
+              <input type="text" id="santri-nisn" class="form-control"
+                     placeholder="Opsional" maxlength="10" />
+            </div>
+          </div>
+
+          <!-- ── DATA WALI ────────────────────────────────── -->
+          <p class="modal-section-label" style="margin-top:8px;">Data Wali</p>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="santri-wali-nama">
+                Nama Wali <span style="color:var(--clr-danger);">*</span>
+              </label>
+              <input type="text" id="santri-wali-nama" class="form-control"
+                     placeholder="Nama lengkap wali" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="santri-wali-hub">Hubungan</label>
+              <select id="santri-wali-hub" class="form-control">
+                <option value="Ayah">Ayah</option>
+                <option value="Ibu">Ibu</option>
+                <option value="Kakak">Kakak</option>
+                <option value="Paman">Paman</option>
+                <option value="Wali">Wali</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="santri-wali-hp">No. HP Wali</label>
+              <input type="tel" id="santri-wali-hp" class="form-control"
+                     placeholder="0812-xxxx-xxxx" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="santri-wali-kerja">Pekerjaan Wali</label>
+              <input type="text" id="santri-wali-kerja" class="form-control"
+                     placeholder="Opsional" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="santri-catatan">Catatan</label>
+            <textarea id="santri-catatan" class="form-control" rows="2"
+                      placeholder="Catatan khusus (opsional)"></textarea>
+          </div>
+
+        </form>
+      </div><!-- .modal-body -->
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" data-close-modal="modal-santri">
+          <i class="ph-bold ph-x"></i> Batal
+        </button>
+        <button class="btn btn-primary" id="btn-submit-santri">
+          <i class="ph-bold ph-floppy-disk"></i>
+          <span id="btn-submit-santri-label">Simpan Data</span>
+        </button>
+      </div>
+
+    </div>
+  </div><!-- #modal-santri -->
+
+  <!-- ═══════════════════════════════════════════════════════════
+       MODAL: DETAIL SANTRI
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modal-detail-santri">
+    <div class="modal-dialog" style="max-width:520px;">
+
+      <div class="modal-header">
+        <div class="modal-header-icon">
+          <i class="ph-bold ph-user"></i>
+        </div>
+        <h3 class="modal-title">Detail Santri</h3>
+        <button class="modal-close" data-close-modal="modal-detail-santri">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- Avatar + nama + badge -->
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+          <div class="santri-avatar"
+               style="width:56px;height:56px;font-size:20px;flex-shrink:0;"
+               id="detail-avatar">?</div>
+          <div>
+            <p id="detail-nama"
+               style="font-size:16px;font-weight:700;margin-bottom:6px;">—</p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <span class="badge neutral" id="detail-status">
+                <span class="badge-dot"></span>—
+              </span>
+              <span class="badge neutral" id="detail-kelas">
+                <span class="badge-dot"></span>—
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grid detail -->
+        <p class="modal-section-label">Data Pribadi</p>
+        <div class="detail-grid" style="margin-bottom:16px;">
+          <div>
+            <p class="detail-label">NIS</p>
+            <p class="detail-val" id="detail-nis">—</p>
+          </div>
+          <div>
+            <p class="detail-label">NISN</p>
+            <p class="detail-val" id="detail-nisn">—</p>
+          </div>
+          <div>
+            <p class="detail-label">Tempat, Tgl Lahir</p>
+            <p class="detail-val" id="detail-ttl">—</p>
+          </div>
+          <div>
+            <p class="detail-label">Jenis Kelamin</p>
+            <p class="detail-val" id="detail-jk">—</p>
+          </div>
+          <div style="grid-column:1/-1;">
+            <p class="detail-label">Alamat</p>
+            <p class="detail-val" id="detail-alamat">—</p>
+          </div>
+        </div>
+
+        <p class="modal-section-label">Data Akademik</p>
+        <div class="detail-grid" style="margin-bottom:16px;">
+          <div>
+            <p class="detail-label">Tanggal Masuk</p>
+            <p class="detail-val" id="detail-tgl-masuk">—</p>
+          </div>
+        </div>
+
+        <p class="modal-section-label">Data Wali</p>
+        <div class="detail-grid" style="margin-bottom:16px;">
+          <div>
+            <p class="detail-label">Nama Wali</p>
+            <p class="detail-val" id="detail-wali-nama">—</p>
+          </div>
+          <div>
+            <p class="detail-label">No. HP Wali</p>
+            <p class="detail-val" id="detail-wali-hp">—</p>
+          </div>
+        </div>
+
+        <div id="detail-catatan-wrap">
+          <p class="modal-section-label">Catatan</p>
+          <p class="detail-val" id="detail-catatan"
+             style="font-size:13px;line-height:1.5;">—</p>
+        </div>
+
+      </div><!-- .modal-body -->
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" data-close-modal="modal-detail-santri">
+          <i class="ph-bold ph-x"></i> Tutup
+        </button>
+        <button class="btn btn-primary" id="btn-edit-from-detail">
+          <i class="ph-bold ph-pencil-simple"></i> Edit Data
+        </button>
+      </div>
+
+    </div>
+  </div><!-- #modal-detail-santri -->
+
+  <!-- ═══════════════════════════════════════════════════════════
+       MODAL: CATAT PEMASUKAN
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modal-pemasukan">
+    <div class="modal-dialog" style="max-width:480px;">
+
+      <div class="modal-header">
+        <div class="modal-header-icon"
+             style="background:rgba(34,197,94,.1);">
+          <i class="ph-bold ph-arrow-down-left"
+             style="color:var(--clr-success);"></i>
+        </div>
+        <h3 class="modal-title">Catat Pemasukan</h3>
+        <button class="modal-close" data-close-modal="modal-pemasukan">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="masuk-tgl">Tanggal</label>
+            <input type="date" id="masuk-tgl" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="masuk-kategori">
+              Kategori <span style="color:var(--clr-danger);">*</span>
+            </label>
+            <select id="masuk-kategori" class="form-control">
+              <option value="">— Pilih —</option>
+              <option value="spp">SPP / Syahriah</option>
+              <option value="infaq">Infaq / Donasi</option>
+              <option value="pendaftaran">Biaya Pendaftaran</option>
+              <option value="lainnya">Lainnya</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="masuk-nominal">
+            Nominal (Rp) <span style="color:var(--clr-danger);">*</span>
+          </label>
+          <input type="number" id="masuk-nominal" class="form-control"
+                 placeholder="contoh: 150000" min="0" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="masuk-keterangan">Keterangan</label>
+          <textarea id="masuk-keterangan" class="form-control" rows="2"
+                    placeholder="Opsional"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" data-close-modal="modal-pemasukan">
+          <i class="ph-bold ph-x"></i> Batal
+        </button>
+        <button class="btn btn-primary" id="btn-simpan-masuk">
+          <i class="ph-bold ph-floppy-disk"></i> Simpan
+        </button>
+      </div>
+
+    </div>
+  </div><!-- #modal-pemasukan -->
+
+  <!-- ═══════════════════════════════════════════════════════════
+       MODAL: CATAT PENGELUARAN
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modal-pengeluaran">
+    <div class="modal-dialog" style="max-width:480px;">
+
+      <div class="modal-header">
+        <div class="modal-header-icon"
+             style="background:rgba(239,68,68,.1);">
+          <i class="ph-bold ph-arrow-up-right"
+             style="color:var(--clr-danger);"></i>
+        </div>
+        <h3 class="modal-title">Catat Pengeluaran</h3>
+        <button class="modal-close" data-close-modal="modal-pengeluaran">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="keluar-tgl">Tanggal</label>
+            <input type="date" id="keluar-tgl" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="keluar-kategori">Kategori</label>
+            <select id="keluar-kategori" class="form-control">
+              <option value="">— Pilih —</option>
+              <option value="operasional">Operasional</option>
+              <option value="honor">Honor Ustadz</option>
+              <option value="sarana">Sarana & Prasarana</option>
+              <option value="kegiatan">Kegiatan</option>
+              <option value="lainnya">Lainnya</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="keluar-nominal">
+            Nominal (Rp) <span style="color:var(--clr-danger);">*</span>
+          </label>
+          <input type="number" id="keluar-nominal" class="form-control"
+                 placeholder="contoh: 500000" min="0" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="keluar-deskripsi">
+            Deskripsi <span style="color:var(--clr-danger);">*</span>
+          </label>
+          <textarea id="keluar-deskripsi" class="form-control" rows="2"
+                    placeholder="Keperluan pengeluaran…"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" data-close-modal="modal-pengeluaran">
+          <i class="ph-bold ph-x"></i> Batal
+        </button>
+        <button class="btn btn-danger" id="btn-simpan-keluar">
+          <i class="ph-bold ph-floppy-disk"></i> Simpan
+        </button>
+      </div>
+
+    </div>
+  </div><!-- #modal-pengeluaran -->
+
+  <!-- ═══════════════════════════════════════════════════════════
+       MODAL: DETAIL TRANSAKSI KEUANGAN
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modal-detail-transaksi">
+    <div class="modal-dialog" style="max-width:440px;">
+
+      <div class="modal-header">
+        <div class="modal-header-icon">
+          <i class="ph-bold ph-receipt"></i>
+        </div>
+        <h3 class="modal-title">Detail Transaksi</h3>
+        <button class="modal-close" data-close-modal="modal-detail-transaksi">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div style="text-align:center;margin-bottom:20px;">
+          <div id="dtl-jenis-badge" style="margin-bottom:10px;"></div>
+          <p id="dtl-nominal"
+             style="font-size:26px;font-weight:800;font-family:monospace;">—</p>
+          <p id="dtl-id"
+             style="font-size:11.5px;color:var(--clr-text-muted);margin-top:4px;">—</p>
+        </div>
+        <div class="detail-grid">
+          <div>
+            <p class="detail-label">Tanggal</p>
+            <p class="detail-val" id="dtl-tgl">—</p>
+          </div>
+          <div>
+            <p class="detail-label">Kategori</p>
+            <p class="detail-val" id="dtl-kategori">—</p>
+          </div>
+          <div style="grid-column:1/-1;">
+            <p class="detail-label">Keterangan</p>
+            <p class="detail-val" id="dtl-ket">—</p>
+          </div>
+          <div>
+            <p class="detail-label">Saldo Setelah</p>
+            <p class="detail-val" id="dtl-saldo">—</p>
+          </div>
+          <div>
+            <p class="detail-label">Dicatat Oleh</p>
+            <p class="detail-val" id="dtl-oleh">—</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" data-close-modal="modal-detail-transaksi">
+          <i class="ph-bold ph-x"></i> Tutup
+        </button>
+      </div>
+
+    </div>
+  </div><!-- #modal-detail-transaksi -->
+
+</div><!-- #app-shell -->
+
+<!-- ═══════════════════════════════════════════════════════════
+     FAB: TOMBOL EXPORT PDF MELAYANG
+═══════════════════════════════════════════════════════════════ -->
+<div id="fab-pdf-container">
+  <button id="btn-fab-pdf" title="Cetak ke PDF">
+    <i class="ph-bold ph-printer"></i>
+  </button>
+  <span class="fab-pdf-label">Export PDF</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MODAL: PENGATURAN EXPORT PDF
+═══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-pdf-export">
+  <div class="modal-dialog bounce" style="max-width:400px;">
+    
+    <div class="modal-header">
+      <div class="modal-header-icon" style="background:rgba(239,68,68,.1);">
+        <i class="ph-bold ph-file-pdf" style="color:var(--clr-danger);"></i>
+      </div>
+      <h3 class="modal-title">Pengaturan Cetak PDF</h3>
+      <button class="modal-close" data-close-modal="modal-pdf-export">
+        <i class="ph-bold ph-x"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <form id="form-pdf-export" autocomplete="off">
+        
+        <!-- Pilihan Ukuran Kertas -->
+        <p class="modal-section-label">Ukuran Kertas</p>
+        <div class="pdf-options-grid">
+          <label class="pdf-option-card">
+            <input type="radio" name="pdf_size" value="a4" checked />
+            <div class="pdf-card-content">
+              <div class="pdf-paper-icon a4"></div>
+              <strong>A4</strong>
+              <span>210 × 297 mm</span>
+            </div>
+          </label>
+          <label class="pdf-option-card">
+            <input type="radio" name="pdf_size" value="f4" />
+            <div class="pdf-card-content">
+              <div class="pdf-paper-icon f4"></div>
+              <strong>F4 / Folio</strong>
+              <span>210 × 330 mm</span>
+            </div>
+          </label>
+        </div>
+
+        <!-- Pilihan Orientasi -->
+        <p class="modal-section-label" style="margin-top:20px;">Orientasi</p>
+        <div class="pdf-options-grid">
+          <label class="pdf-option-card">
+            <input type="radio" name="pdf_orient" value="portrait" checked />
+            <div class="pdf-card-content">
+              <i class="ph-bold ph-file-arrow-up" style="font-size:24px; color:var(--clr-text-sub);"></i>
+              <strong>Portrait</strong>
+              <span>Tegak</span>
+            </div>
+          </label>
+          <label class="pdf-option-card">
+            <input type="radio" name="pdf_orient" value="landscape" />
+            <div class="pdf-card-content">
+              <i class="ph-bold ph-file-arrow-up" style="font-size:24px; color:var(--clr-text-sub); transform: rotate(90deg);"></i>
+              <strong>Landscape</strong>
+              <span>Mendatar</span>
+            </div>
+          </label>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="modal-footer" style="justify-content:center;">
+      <button class="btn btn-outline" data-close-modal="modal-pdf-export" style="flex:1;">
+        Batal
+      </button>
+      <button class="btn btn-danger" id="btn-execute-pdf" style="flex:1;">
+        <i class="ph-bold ph-printer"></i> Cetak / Simpan PDF
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     FOOTER KHUSUS CETAK (PRINT ONLY)
+═══════════════════════════════════════════════════════════════ -->
+<div id="pdf-print-footer">
+  <p><strong>Madrasah Diniyah DQLM</strong> — Sistem Informasi Manajemen Terpadu</p>
+  <p>Dicetak pada: <span id="pdf-print-date"></span> | Dokumen Resmi SIM Madin</p>
+</div>
+
+<!-- JAVASCRIPT UTAMA (Kerangka Dasar & Dashboard) -->
+<script src="assets/js/app.main.js" defer></script>
+
+</body>
+</html>
