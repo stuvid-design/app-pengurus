@@ -372,11 +372,3 @@ if (btnLogout) {
     window.dispatchEvent(new CustomEvent('madin:logout'));
   });
 }
-
-// ── MODE DEMO (hapus ini setelah Firebase aktif) ──
-window.showApp({
-  displayName: 'Admin Demo',
-  namaLengkap: 'Admin Utama',
-  email:       'admin@madin.id',
-  role:        'kepala_madrasah',
-});
