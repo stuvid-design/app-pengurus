@@ -1,0 +1,147 @@
+    /* ============================================================
+   style.keuangan.css — Modul Keuangan (Kas & Laporan)
+   ============================================================ */
+
+    .badge-masuk { background: rgba(34,197,94,.12); color: #15803d }
+    .badge-keluar { background: rgba(239,68,68,.12); color: #b91c1c }
+
+    /* Keuangan cards (Gradien) */
+    /* Keuangan cards */
+    .keu-cards {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 16px;
+      margin-bottom: 24px
+    }
+    
+    @media(max-width:768px) {
+      .keu-cards { grid-template-columns: 1fr } 
+    }
+    
+    .keu-card {
+      border-radius: var(--radius-md);
+      padding: 20px 22px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-card)
+    }
+    
+    .keu-card::after {
+      content: '';
+      position: absolute;
+      right: -16px;
+      bottom: -16px;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.1)
+    }
+    
+    .keu-card.masuk {
+      background: linear-gradient(135deg,#1a6b3c,#2d9e5f)
+    }
+    .keu-card.keluar {
+      background: linear-gradient(135deg,#b91c1c,#ef4444)
+    }
+    .keu-card.saldo {
+      background: linear-gradient(135deg,#b45309,#f0a500)
+    }
+    
+    .keu-card .kc-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,.75);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 7px
+    }
+    .keu-card .kc-label i { font-size: 16px }
+    .keu-card .kc-val {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.1
+    }
+    
+    .keu-card .kc-sub {
+      font-size: 12px;
+      color: rgba(255,255,255,.6);
+      margin-top: 5px
+    }
+    
+    .keu-card .kc-icon {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 42px;
+      color: rgba(255,255,255,.12)
+    }
+    
+    .keu-action-bar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+      justify-content: space-between
+    }
+
+    /* Nominal Text Colors */
+        .td-nominal {
+      font-weight: 700;
+      font-family: monospace;
+      font-size: 13.5px
+    }
+    
+    .td-nominal.masuk  { color: #15803d }
+    .td-nominal.keluar { color: #b91c1c }
+
+    /* Keuangan summary (dashboard widget) */
+    .keu-summary { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 12px; 
+      margin-bottom: 14px; 
+    }
+    
+    .keu-item { 
+      padding: 10px 14px; 
+      border-radius: var(--radius-sm); 
+    }
+    
+    .keu-item.in  { 
+      background: rgba(34,197,94,.08);  
+      border: 1px solid rgba(34,197,94,.2); 
+    }
+    
+    .keu-item.out { 
+      background: rgba(239,68,68,.08);  
+      border: 1px solid rgba(239,68,68,.2); 
+    }
+    
+    .keu-item label { 
+      font-size: 11px; 
+      font-weight: 600; 
+      color: var(--clr-text-sub); 
+      display: flex; 
+      align-items: center; 
+      gap: 5px; 
+      margin-bottom: 4px; 
+    }
+    
+    .keu-item label span { 
+      width: 8px; 
+      height: 8px; 
+      border-radius: 50%; 
+      display: inline-block; 
+    }
+    
+    .keu-item.in label span { background: var(--clr-success); }
+    .keu-item.out label span { background: var(--clr-danger); }
+    .keu-val { font-size: 16px; font-weight: 800; }
+    .keu-item.in .keu-val  { color: #15803d; }
+    .keu-item.out .keu-val { color: var(--clr-danger); }
