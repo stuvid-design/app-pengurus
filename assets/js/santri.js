@@ -225,18 +225,20 @@ function _editSantri(id) {
   document.getElementById('modal-santri-title').textContent = 'Edit Data Santri';
   document.getElementById('btn-submit-santri-label').textContent = 'Update Data';
 
-  const f = (eid, val) => { const el = document.getElementById(eid); if (el) el.value = val || ''; };
+const f = (eid, val) => { const el = document.getElementById(eid); if (el) el.value = val || ''; };
+  
   f('santri-nama', s.nama); 
-  f('santri-nis', s.nis);
-  f('santri-kelas', s.kelas);
+  f('santri-nis', s.nis); 
+  f('santri-kelas', s.kelas); 
   f('santri-status', s.status);
-  f('santri-wali-nama', s.waliNama);
-  f('santri-wali-hp', s.waliHp);
   f('santri-alamat', s.alamat);
   f('santri-tgl-masuk', s.tglMasuk);
+  f('santri-wali-nama', s.waliNama); 
   f('santri-wali-hub', s.waliHub);
   f('santri-ttl-tempat', s.ttlTempat);
   f('santri-ttl-tgl', s.ttlTgl);
+  
+  // 👇 TAMBAHKAN 4 BARIS INI (wali-hp sebenarnya sudah ada di kode awal Anda) 👇
   f('santri-nisn', s.nisn);
   f('santri-wali-hp', s.waliHp);
   f('santri-wali-kerja', s.waliKerja);
@@ -264,20 +266,20 @@ const payload = _appToDB({
     nis: document.getElementById('santri-nis')?.value.trim(),
     kelas: document.getElementById('santri-kelas')?.value,
     status: document.getElementById('santri-status')?.value || 'Aktif',
-    waliNama: document.getElementById('santri-wali-nama')?.value.trim(),
     jk: document.querySelector('input[name="santri-jk"]:checked')?.value || 'L',
     alamat: document.getElementById('santri-alamat')?.value.trim(),
     tglMasuk: document.getElementById('santri-tgl-masuk')?.value,
+    waliNama: document.getElementById('santri-wali-nama')?.value.trim(),
     waliHub: document.getElementById('santri-wali-hub')?.value.trim(),
+    ttlTempat: document.getElementById('santri-ttl-tempat')?.value.trim(),
+    ttlTgl: document.getElementById('santri-ttl-tgl')?.value,
+
+    // 👇 TAMBAHKAN 4 BARIS INI 👇
     nisn: document.getElementById('santri-nisn')?.value.trim(),
     waliHp: document.getElementById('santri-wali-hp')?.value.trim(),
     waliKerja: document.getElementById('santri-wali-kerja')?.value.trim(),
     catatan: document.getElementById('santri-catatan')?.value.trim()
-    
-    // Pastikan berada di DALAM kurung kurawal ini, dan perhatikan huruf besarnya
-    ttlTempat: document.getElementById('santri-ttl-tempat')?.value.trim(),
-    ttlTgl: document.getElementById('santri-ttl-tgl')?.value
-  }); // <-- Batas kurung kurawal tutup
+  });
 
   console.log("Cek Payload yang mau dikirim:", payload);
 
