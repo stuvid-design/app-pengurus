@@ -254,8 +254,44 @@ function _viewSantri(id) {
   _santriState.viewDocId = id;
 
   const set = (eid, val) => { const el = document.getElementById(eid); if (el) el.textContent = val || '—'; };
-  set('detail-nama', s.nama); set('detail-nis', s.nis); set('detail-kelas', s.kelasLabel);
-  set('detail-wali-nama', `${s.waliNama || '—'} (${s.waliHub || ''})`); set('detail-alamat', s.alamat);
+  
+  // 1. Data Utama & Akademik
+  set('detail-nama', s.nama); 
+  set('detail-nis', s.nis); 
+  set('detail-nisn', s.nisn);
+  set('detail-kelas', s.kelasLabel);
+  
+  // 2. TTL, Jenis Kelamin, Alamat
+  // Gabungkan Tempat dan Tanggal Lahir (menggunakan fungsi _tgl bawaan Anda)
+  const ttl = (s.ttlTempat || s.ttlTgl) ? `${s.ttlTempat || '—'}, ${_tgl(s.ttlTgl) || '—'}` : '—';
+  set('detail-ttl', ttl);
+  
+  set('detail-jk', s.jk === 'P' ? 'Perempuan' : (s.jk === 'L' ? 'Laki-laki' : '—'));
+  set('detail-alamat', s.alamat);
+  set('detail-tgl-masuk', _tgl(s.tglMasuk));
+  
+  // 3. Data Wali & Catatan
+  set('detail-wali-nama', `${s.waliNama || '—'} (${s.waliHub || '—'})`); 
+  set('detail-wali-hp', s.waliHp);
+  set('detail-catatan', s.catatan);
+
+  // 4. Update Avatar (Warna & Inisial)
+  const avatarEl = document.getElementById('detail-avatar');
+  if (avatarEl) {
+    const [bg, fg] = _color(s.nis || s._id); // Pakai fungsi warna bawaan
+    avatarEl.style.background = bg;
+    avatarEl.style.color = fg;
+    avatarEl.textContent = _ini(s.nama); // Pakai fungsi inisial bawaan
+  }
+
+  // 5. Update Badge Status (Warna Label Status)
+  const statusEl = document.getElementById('detail-status');
+  if (statusEl) {
+    const map = { Aktif:'success', Cuti:'warning', Lulus:'info', 'Non-Aktif':'danger' };
+    statusEl.className = `badge ${map[s.status] || 'neutral'}`;
+    statusEl.innerHTML = `<span class="badge-dot"></span>${s.status || '—'}`;
+  }
+
   if(window.openModal) window.openModal('modal-detail-santri');
 }
 
