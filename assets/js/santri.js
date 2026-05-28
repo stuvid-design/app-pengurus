@@ -270,11 +270,9 @@ const payload = _appToDB({
     alamat: document.getElementById('santri-alamat')?.value.trim(),
     tglMasuk: document.getElementById('santri-tgl-masuk')?.value,
     waliNama: document.getElementById('santri-wali-nama')?.value.trim(),
-    waliHub: document.getElementById('santri-wali-hub')?.value.trim(),
+    waliHub: document.getElementById('santri-wali-hub')?.value.trim(), // <- Koma ini yang kemungkinan terlewat sebelumnya
     ttlTempat: document.getElementById('santri-ttl-tempat')?.value.trim(),
     ttlTgl: document.getElementById('santri-ttl-tgl')?.value,
-
-    // 👇 TAMBAHKAN 4 BARIS INI 👇
     nisn: document.getElementById('santri-nisn')?.value.trim(),
     waliHp: document.getElementById('santri-wali-hp')?.value.trim(),
     waliKerja: document.getElementById('santri-wali-kerja')?.value.trim(),
