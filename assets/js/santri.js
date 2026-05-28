@@ -228,6 +228,8 @@ function _editSantri(id) {
   const f = (eid, val) => { const el = document.getElementById(eid); if (el) el.value = val || ''; };
   f('santri-nama', s.nama); f('santri-nis', s.nis); f('santri-kelas', s.kelas); f('santri-status', s.status);
   f('santri-wali-nama', s.waliNama); f('santri-wali-hp', s.waliHp); f('santri-alamat', s.alamat);
+  f('santri-tgl-masuk', s.tglMasuk);
+  f('santri-wali-hub', s.waliHub);
   // (Isi field lainnya yang diperlukan...)
 
   if(window.openModal) window.openModal('modal-santri');
@@ -254,6 +256,8 @@ async function _submitForm() {
     waliNama: document.getElementById('santri-wali-nama')?.value.trim(),
     jk: document.querySelector('input[name="santri-jk"]:checked')?.value || 'L',
     alamat: document.getElementById('santri-alamat')?.value.trim(),
+    tglMasuk: document.getElementById('santri-tgl-masuk')?.value,
+    waliHub: document.getElementById('santri-wali-hub')?.value.trim(),
   });
 
   if (!payload.nama || !payload.nis || !payload.kelas) {
