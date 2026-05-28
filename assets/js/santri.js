@@ -255,7 +255,7 @@ function _viewSantri(id) {
 
 async function _submitForm() {
   if (!window.supabase) return;
-  const payload = _appToDB({
+const payload = _appToDB({
     nama: document.getElementById('santri-nama')?.value.trim(),
     nis: document.getElementById('santri-nis')?.value.trim(),
     kelas: document.getElementById('santri-kelas')?.value,
@@ -265,9 +265,11 @@ async function _submitForm() {
     alamat: document.getElementById('santri-alamat')?.value.trim(),
     tglMasuk: document.getElementById('santri-tgl-masuk')?.value,
     waliHub: document.getElementById('santri-wali-hub')?.value.trim(),
+    
+    // Pastikan berada di DALAM kurung kurawal ini, dan perhatikan huruf besarnya
     ttlTempat: document.getElementById('santri-ttl-tempat')?.value.trim(),
-    ttlTgl: document.getElementById('santri-ttl-tgl')?.value,
-  });
+    ttlTgl: document.getElementById('santri-ttl-tgl')?.value
+  }); // <-- Batas kurung kurawal tutup
 
   if (!payload.nama || !payload.nis || !payload.kelas) {
     if(window.showToast) window.showToast('error', 'Validasi Gagal', 'Nama, NIS, dan Kelas wajib diisi.'); return;
