@@ -306,7 +306,7 @@ const payload = _appToDB({
     alamat: document.getElementById('santri-alamat')?.value.trim(),
     tglMasuk: document.getElementById('santri-tgl-masuk')?.value,
     waliNama: document.getElementById('santri-wali-nama')?.value.trim(),
-    waliHub: document.getElementById('santri-wali-hub')?.value.trim(), // <- Koma ini yang kemungkinan terlewat sebelumnya
+    waliHub: document.getElementById('santri-wali-hub')?.value.trim(),
     ttlTempat: document.getElementById('santri-ttl-tempat')?.value.trim(),
     ttlTgl: document.getElementById('santri-ttl-tgl')?.value,
     nisn: document.getElementById('santri-nisn')?.value.trim(),
