@@ -237,6 +237,10 @@ function _editSantri(id) {
   f('santri-wali-hub', s.waliHub);
   f('santri-ttl-tempat', s.ttlTempat);
   f('santri-ttl-tgl', s.ttlTgl);
+  f('santri-nisn', s.nisn);
+  f('santri-wali-hp', s.waliHp);
+  f('santri-wali-kerja', s.waliKerja);
+  f('santri-catatan', s.catatan);
   // (Isi field lainnya yang diperlukan...)
 
   if(window.openModal) window.openModal('modal-santri');
@@ -265,11 +269,17 @@ const payload = _appToDB({
     alamat: document.getElementById('santri-alamat')?.value.trim(),
     tglMasuk: document.getElementById('santri-tgl-masuk')?.value,
     waliHub: document.getElementById('santri-wali-hub')?.value.trim(),
+    nisn: document.getElementById('santri-nisn')?.value.trim(),
+    waliHp: document.getElementById('santri-wali-hp')?.value.trim(),
+    waliKerja: document.getElementById('santri-wali-kerja')?.value.trim(),
+    catatan: document.getElementById('santri-catatan')?.value.trim()
     
     // Pastikan berada di DALAM kurung kurawal ini, dan perhatikan huruf besarnya
     ttlTempat: document.getElementById('santri-ttl-tempat')?.value.trim(),
     ttlTgl: document.getElementById('santri-ttl-tgl')?.value
   }); // <-- Batas kurung kurawal tutup
+
+  console.log("Cek Payload yang mau dikirim:", payload);
 
   if (!payload.nama || !payload.nis || !payload.kelas) {
     if(window.showToast) window.showToast('error', 'Validasi Gagal', 'Nama, NIS, dan Kelas wajib diisi.'); return;
