@@ -190,9 +190,9 @@ async function _renderFormAbsensi() {
   // Tampilkan skeleton saat loading
   tbody.innerHTML = _skeletonRows(5, 5);
 
-  // Ambil daftar santri aktif di kelas ini
+// Ambil daftar santri aktif di kelas ini
   const santriKelas = (window.santriCache || [])
-    .filter(s => s.kelas === kelas && s.status === 'Aktif')
+    .filter(s => String(s.kelas) === String(kelas) && s.status === 'Aktif')
     .sort((a, b) => a.nama.localeCompare(b.nama));
 
   if (!santriKelas.length) {
@@ -214,7 +214,7 @@ async function _renderFormAbsensi() {
     const saved = existMap[s._id];
     const st    = saved?.status || 'H';
     const ket   = saved?.keterangan || '';
-    const uid   = 'abs-' + s._id.replace(/-/g,'').slice(0,8);
+    const uid   = 'abs-' + String(s._id).replace(/-/g,'').slice(0,8);
     return `
       <tr data-santri-id="${s._id}">
         <td style="color:var(--clr-text-muted);font-size:12px;
@@ -747,9 +747,9 @@ async function _renderBukuAbsen() {
   const days    = _daysInMonth(bulan);
   const [y, m]  = bulan.split('-').map(Number);
 
-  // Daftar santri aktif di kelas ini
+// Daftar santri aktif di kelas ini
   const santriKelas = (window.santriCache || [])
-    .filter(s => s.kelas === kelas && s.status === 'Aktif')
+    .filter(s => String(s.kelas) === String(kelas) && s.status === 'Aktif')
     .sort((a, b) => a.nama.localeCompare(b.nama));
 
   if (!santriKelas.length) {
