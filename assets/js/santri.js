@@ -226,10 +226,17 @@ function _editSantri(id) {
   document.getElementById('btn-submit-santri-label').textContent = 'Update Data';
 
   const f = (eid, val) => { const el = document.getElementById(eid); if (el) el.value = val || ''; };
-  f('santri-nama', s.nama); f('santri-nis', s.nis); f('santri-kelas', s.kelas); f('santri-status', s.status);
-  f('santri-wali-nama', s.waliNama); f('santri-wali-hp', s.waliHp); f('santri-alamat', s.alamat);
+  f('santri-nama', s.nama); 
+  f('santri-nis', s.nis);
+  f('santri-kelas', s.kelas);
+  f('santri-status', s.status);
+  f('santri-wali-nama', s.waliNama);
+  f('santri-wali-hp', s.waliHp);
+  f('santri-alamat', s.alamat);
   f('santri-tgl-masuk', s.tglMasuk);
   f('santri-wali-hub', s.waliHub);
+  f('santri-ttl-tempat', s.ttlTempat);
+  f('santri-ttl-tgl', s.ttlTgl);
   // (Isi field lainnya yang diperlukan...)
 
   if(window.openModal) window.openModal('modal-santri');
@@ -258,6 +265,8 @@ async function _submitForm() {
     alamat: document.getElementById('santri-alamat')?.value.trim(),
     tglMasuk: document.getElementById('santri-tgl-masuk')?.value,
     waliHub: document.getElementById('santri-wali-hub')?.value.trim(),
+    ttlTempat: document.getElementById('santri-ttl-tempat')?.value.trim(),
+    ttlTgl: document.getElementById('santri-ttl-tgl')?.value,
   });
 
   if (!payload.nama || !payload.nis || !payload.kelas) {
